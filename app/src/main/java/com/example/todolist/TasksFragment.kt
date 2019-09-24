@@ -12,11 +12,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todolist.adapter.TaskAdapter
 import kotlinx.android.synthetic.main.dialog_add_new.view.*
-import kotlinx.android.synthetic.main.fragment_list.*
+import kotlinx.android.synthetic.main.fragment_tasks.*
 
-class FragmentList : Fragment() {
-
-    val TAG = "TasksFragment"
+class TasksFragment : Fragment() {
     var tasks: ArrayList<String> = ArrayList()
     private var adapter: TaskAdapter? = null
 
@@ -29,7 +27,7 @@ class FragmentList : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_list, container, false)
+        return inflater.inflate(R.layout.fragment_tasks, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
