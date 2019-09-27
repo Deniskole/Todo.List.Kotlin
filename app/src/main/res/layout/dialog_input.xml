@@ -8,7 +8,7 @@
         android:id="@+id/descriptionEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/description_task"
+        android:hint="@string/message_enter_description"
         android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:padding="@dimen/spacing_x2" />
