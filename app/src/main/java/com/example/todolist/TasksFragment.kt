@@ -24,12 +24,6 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
     private var tasks = mutableListOf<Task>()
     private val adapter = TasksAdapter(tasks, this)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
