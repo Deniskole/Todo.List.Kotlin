@@ -16,5 +16,9 @@ class TaskViewHolder(
         itemView.setOnClickListener {
             listener.get()?.onViewHolderClick(this, adapterPosition, it.id)
         }
+        itemView.setOnLongClickListener {
+            listener.get()?.onViewHolderLongClick(this, adapterPosition, it.id)
+            true
+        }
     }
 }

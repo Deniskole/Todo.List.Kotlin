@@ -7,18 +7,21 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.TasksAdapter
+import com.example.todolist.model.Task
 import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 
-class TasksFragment : Fragment(), OnViewHolderClickListener {
-    private var tasks = mutableListOf<String>()
+class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListener {
+    private var tasks = mutableListOf<Task>()
     private val adapter = TasksAdapter(tasks, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,18 +42,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         recyclerView.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.addItem -> showCreateTaskDialog(TaskAction.NEW)
-            else -> super.onOptionsItemSelected(item)
-        }
-        return true
+        floatingActionButton.setOnClickListener(this)
     }
 
     @SuppressLint("InflateParams")
@@ -67,23 +59,19 @@ class TasksFragment : Fragment(), OnViewHolderClickListener {
                 builder.setView(view).apply {
                     if (action == TaskAction.NEW) {
                         setPositiveButton(R.string.add) { _, _ ->
-                            addTask(view.descriptionEditText.text.toString())
+                            addTask(Task(view.descriptionEditText.text.toString()))
                         }
                     } else {
                         if (position != null) {
-                            view.descriptionEditText.setText(tasks[position])
+                            view.descriptionEditText.setText(tasks[position].descriptions)
                         }
-
                         setTitle(R.string.edit)
-                        setNeutralButton(R.string.delete) { _, _ ->
-                            showCreateTaskDialog(TaskAction.DELETE, position)
-                        }
                         setPositiveButton(R.string.save) { _, _ ->
                             val text = view.descriptionEditText.text.toString()
                             if (position == null) {
-                                addTask(text)
+                                addTask(Task(text))
                             } else {
-                                editTask(position, text)
+                                editTask(position, Task(text))
                             }
                         }
                     }
@@ -116,13 +104,11 @@ class TasksFragment : Fragment(), OnViewHolderClickListener {
                     })
                 }
             }
-
             TaskAction.DELETE -> {
-                builder.setNegativeButton(R.string.cancel) { _, _ ->
-                    showCreateTaskDialog(TaskAction.EDIT, position)
-                }.setPositiveButton(R.string.delete) { _, _ ->
-                    if (position != null) deleteTask(position)
-                }
+                builder.setNegativeButton(R.string.cancel) { _, _ -> }
+                    .setPositiveButton(R.string.delete) { _, _ ->
+                        if (position != null) deleteTask(position)
+                    }
             }
         }
 
@@ -133,7 +119,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener {
         dialog.show()
     }
 
-    private fun addTask(task: String) {
+    private fun addTask(task: Task) {
         tasks.add(task)
         adapter.notifyDataSetChanged()
     }
@@ -143,12 +129,22 @@ class TasksFragment : Fragment(), OnViewHolderClickListener {
         adapter.notifyDataSetChanged()
     }
 
-    private fun editTask(position: Int, task: String) {
+    private fun editTask(position: Int, task: Task) {
         tasks[position] = task
         adapter.notifyDataSetChanged()
     }
 
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.floatingActionButton -> showCreateTaskDialog(TaskAction.NEW)
+        }
+    }
+
     override fun onViewHolderClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
         showCreateTaskDialog(TaskAction.EDIT, position)
+    }
+
+    override fun onViewHolderLongClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
+        showCreateTaskDialog(TaskAction.DELETE, position)
     }
 }
