@@ -10,6 +10,7 @@
     <!-- endregion -->
 
     <!-- region Messages -->
+    <string name="message_enter_title">Enter title (optional)</string>
     <string name="message_enter_description">Enter description</string>
     <!-- endregion -->
 

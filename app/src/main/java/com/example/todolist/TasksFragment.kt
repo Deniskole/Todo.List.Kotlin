@@ -27,6 +27,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -59,19 +60,26 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
                 builder.setView(view).apply {
                     if (action == TaskAction.NEW) {
                         setPositiveButton(R.string.add) { _, _ ->
-                            addTask(Task(view.descriptionEditText.text.toString()))
+                            addTask(
+                                Task(
+                                    view.titleEditText.text.toString(),
+                                    view.descriptionEditText.text.toString()
+                                )
+                            )
                         }
                     } else {
                         if (position != null) {
+                            view.titleEditText.setText(tasks[position].title)
                             view.descriptionEditText.setText(tasks[position].descriptions)
                         }
                         setTitle(R.string.edit)
                         setPositiveButton(R.string.save) { _, _ ->
-                            val text = view.descriptionEditText.text.toString()
+                            val title = view.titleEditText.text.toString()
+                            val description = view.descriptionEditText.text.toString()
                             if (position == null) {
-                                addTask(Task(text))
+                                addTask(Task(title, description))
                             } else {
-                                editTask(position, Task(text))
+                                editTask(position, Task(title, description))
                             }
                         }
                     }

@@ -1,3 +1,3 @@
 package com.example.todolist.model
 
-class Task(val descriptions: String)
+class Task(val title: String? = null, val descriptions: String)
