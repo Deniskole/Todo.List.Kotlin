@@ -7,6 +7,8 @@
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="about">About</string>
+
     <!-- endregion -->
 
     <!-- region Messages -->
@@ -16,6 +18,9 @@
 
     <!-- region Task -->
     <string name="new_task">New task</string>
+    <string name="favorite_task">Favotite tasks</string>
+    <string name="all_tasks">All tasks</string>
+    <string name="favorite">favorite</string>
     <!-- endregion -->
 
 </resources>

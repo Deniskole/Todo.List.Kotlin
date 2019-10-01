@@ -3,25 +3,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
-    <TextView
-        android:textColor="@color/colorPrimaryDark"
-        android:id="@+id/taskTitleTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingTop="20dp"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        tools:ignore="RtlSymmetry" />
 
-    <TextView
-        android:id="@+id/taskDescriptionTextView"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingBottom="20dp"
-        android:textSize="20sp"
-        tools:ignore="RtlSymmetry" />
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/taskTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingTop="20dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="RtlSymmetry" />
+
+        <TextView
+            android:id="@+id/taskDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingBottom="20dp"
+            android:textSize="20sp"
+            tools:ignore="RtlSymmetry" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/taskFavoriteImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="20dp"
+        android:contentDescription="@string/favorite"
+        android:src="@drawable/ic_favorite_gray_24dp" />
 </LinearLayout>

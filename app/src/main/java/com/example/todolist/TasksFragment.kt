@@ -7,9 +7,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,8 +19,20 @@ import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 
 class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListener {
+
     private var tasks = mutableListOf<Task>()
     private val adapter = TasksAdapter(tasks, this)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+        tasks.add(Task("Test title", "Test description", true))
+        tasks.add(Task("", descriptions = "Test description"))
+        tasks.add(Task("Test title", "Test description", true))
+        tasks.add(Task(title = null, descriptions = "Test description"))
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -73,7 +83,10 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
                             if (position == null) {
                                 addTask(Task(title, description))
                             } else {
-                                editTask(position, Task(title, description))
+                                editTask(
+                                    position,
+                                    Task(title, description, tasks[position].favorite)
+                                )
                             }
                         }
                     }
@@ -115,9 +128,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
         }
 
         val dialog = builder.create()
-
         onShowListener?.also { dialog.setOnShowListener(it) }
-
         dialog.show()
     }
 
@@ -136,6 +147,11 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
         adapter.notifyDataSetChanged()
     }
 
+    private fun favorite(position: Int) {
+        tasks[position].favorite = !tasks[position].favorite
+        adapter.notifyDataSetChanged()
+    }
+
     override fun onClick(v: View) {
         when (v.id) {
             R.id.floatingActionButton -> showCreateTaskDialog(TaskAction.NEW)
@@ -148,5 +164,37 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
 
     override fun onViewHolderLongClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
         showCreateTaskDialog(TaskAction.DELETE, position)
+    }
+
+    override fun onViewHolderFavoriteClick(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        id: Int
+    ) {
+        favorite(position)
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val sortedTasks: List<Task>?
+        when (item.itemId) {
+            R.id.allItem -> {
+
+            }
+            R.id.favoriteItem -> {
+                sortedTasks = tasks.filter { it.favorite }
+                adapter.items = sortedTasks
+                adapter.notifyDataSetChanged()
+            }
+            R.id.aboutItem -> {
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

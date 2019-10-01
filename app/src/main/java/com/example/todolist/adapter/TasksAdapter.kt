@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.task_list_item_t_d.view.*
 import java.lang.ref.WeakReference
 
 class TasksAdapter(
-    private val items: List<Task>,
+    var items: List<Task>,
     listener: OnViewHolderClickListener
 ) : RecyclerView.Adapter<TaskViewHolder>() {
 
@@ -37,9 +37,19 @@ class TasksAdapter(
             DESCRIPTION_TITLE.TYPE -> {
                 holder.itemView.taskTitleTextView.text = items[position].title
                 holder.itemView.taskDescriptionTextView.text = items[position].descriptions
+                if (items[position].favorite) {
+                    holder.itemView.taskFavoriteImageView.setImageResource(R.drawable.ic_favorite_red_24dp)
+                } else {
+                    holder.itemView.taskFavoriteImageView.setImageResource(R.drawable.ic_favorite_gray_24dp)
+                }
             }
             DESCRIPTION.TYPE -> {
                 holder.itemView.taskDescriptionTextView.text = items[position].descriptions
+                if (items[position].favorite) {
+                    holder.itemView.taskFavoriteImageView.setImageResource(R.drawable.ic_favorite_red_24dp)
+                } else {
+                    holder.itemView.taskFavoriteImageView.setImageResource(R.drawable.ic_favorite_gray_24dp)
+                }
             }
         }
     }
