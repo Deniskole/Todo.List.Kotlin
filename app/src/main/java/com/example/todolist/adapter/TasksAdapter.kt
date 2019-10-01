@@ -39,6 +39,7 @@ class TasksAdapter(
                 holder.itemView.taskTitleTextView.text = items[position].title
                 holder.itemView.taskDescriptionTextView.text = items[position].descriptions
                 if (items[position].favorite) {
+                    /* TODO: You can use tint to change the color of the icon instead of duplication icons with different colors. */
                     holder.itemView.taskFavoriteImageView.setImageResource(R.drawable.ic_favorite_red_24dp)
                 } else {
                     holder.itemView.taskFavoriteImageView.setImageResource(R.drawable.ic_favorite_gray_24dp)
