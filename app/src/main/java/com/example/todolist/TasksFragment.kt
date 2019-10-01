@@ -27,10 +27,12 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
+        /*
+        TODO: DO NOT COMMIT DEBUG DATA!
         tasks.add(Task("Test title", "Test description", true))
         tasks.add(Task("", descriptions = "Test description"))
         tasks.add(Task("Test title", "Test description", true))
-        tasks.add(Task(title = null, descriptions = "Test description"))
+        tasks.add(Task(title = null, descriptions = "Test description"))*/
 
     }
 
@@ -47,9 +49,11 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         recyclerView.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
+        /* TODO: Group code (divide code groups with empty lines).*/
         floatingActionButton.setOnClickListener(this)
     }
 
+    /* TODO: What is the issue in the naming of this method? */
     @SuppressLint("InflateParams")
     private fun showCreateTaskDialog(action: TaskAction, position: Int? = null) {
         val builder = AlertDialog.Builder(context)
@@ -73,7 +77,9 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
                         }
                     } else {
                         if (position != null) {
-                            view.titleEditText.setText(tasks[position].title)
+                            view.titleEditText.setText(/*TODO: tasks[position] - repeating code.*/
+                                tasks[position].title
+                            )
                             view.descriptionEditText.setText(tasks[position].descriptions)
                         }
                         setTitle(R.string.edit)
@@ -173,6 +179,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
     ) {
         favorite(position)
     }
+    /* TODO: Can be simplified with Single-expression function. */
+    /* TODO: Formatting issue. 2 new lines between blocks*/
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -180,19 +188,22 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    /* TODO: Group class methods by functionality. e.g. lifecycle, super class overrides, implemented interfaces, private methods.*/
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val sortedTasks: List<Task>?
         when (item.itemId) {
             R.id.allItem -> {
-
+                /* TODO: Unimplemented functionality. Why this functionality break app logic? */
             }
             R.id.favoriteItem -> {
+                /* TODO: What is the issue in this block? Why this functionality break app logic?*/
                 sortedTasks = tasks.filter { it.favorite }
                 adapter.items = sortedTasks
                 adapter.notifyDataSetChanged()
+                /* TODO: Where is the return statement?.*/
             }
             R.id.aboutItem -> {
-
+                /* TODO: Unused code.*/
             }
         }
         return super.onOptionsItemSelected(item)

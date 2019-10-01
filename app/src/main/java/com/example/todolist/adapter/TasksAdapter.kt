@@ -29,6 +29,7 @@ class TasksAdapter(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.task_list_item_d, parent, false)
         }
+        /* TODO: Divide view holder into 2 view holder's. */
         return TaskViewHolder(weakListener, view)
     }
 
@@ -55,6 +56,7 @@ class TasksAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
+        /* TODO: This block can be simplified. */
         val title: String? = items[position].title
         return if (title != null && title.isNotEmpty()) {
             DESCRIPTION_TITLE.TYPE
