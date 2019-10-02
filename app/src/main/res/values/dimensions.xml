@@ -2,4 +2,5 @@
 <resources>
     <dimen name="spacing">8dp</dimen>
     <dimen name="spacing_x2">16dp</dimen>
+    <dimen name="icon_small_size">30dp</dimen>
 </resources>

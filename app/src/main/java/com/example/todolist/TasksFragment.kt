@@ -1,7 +1,6 @@
 package com.example.todolist
 
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
@@ -13,13 +12,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.adapter.OnViewHolderClickListener
+import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
 import com.example.todolist.model.Task
 import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 
-class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListener {
-
+class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongClickListener,
+    View.OnClickListener {
     private var tasks = mutableListOf<Task>()
     private val adapter = TasksAdapter(tasks, this)
 
@@ -27,13 +27,6 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
-        /*
-        TODO: DO NOT COMMIT DEBUG DATA!
-        tasks.add(Task("Test title", "Test description", true))
-        tasks.add(Task("", descriptions = "Test description"))
-        tasks.add(Task("Test title", "Test description", true))
-        tasks.add(Task(title = null, descriptions = "Test description"))*/
-
     }
 
     override fun onCreateView(
@@ -46,25 +39,68 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
         super.onViewCreated(view, savedInstanceState)
 
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         recyclerView.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
-        /* TODO: Group code (divide code groups with empty lines).*/
+
         floatingActionButton.setOnClickListener(this)
     }
 
-    /* TODO: What is the issue in the naming of this method? */
-    @SuppressLint("InflateParams")
-    private fun showCreateTaskDialog(action: TaskAction, position: Int? = null) {
-        val builder = AlertDialog.Builder(context)
-            .setTitle(action.titleResId)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.favoriteItem -> {
+                val sortedTasks: MutableList<Task>?
+                sortedTasks = tasks.filter { it.favorite } as MutableList<Task>
+                tasks.clear()
+                tasks.addAll(sortedTasks)
+                adapter.notifyDataSetChanged()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.floatingActionButton -> actionTaskDialog(TaskAction.NEW)
+        }
+    }
+
+    override fun onViewHolderClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
+        when (id) {
+            R.id.taskFavoriteImageView -> favorite(position)
+            R.id.container -> actionTaskDialog(TaskAction.EDIT, position)
+        }
+    }
+
+    override fun onViewHolderLongClick(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        id: Int
+    ): Boolean {
+        actionTaskDialog(TaskAction.DELETE, position)
+        return true
+    }
+
+    private fun actionTaskDialog(action: TaskAction, position: Int? = null) {
+
+        var task: Task? = null
+
+        if (position != null) {
+            task = tasks[position]
+        }
+
+        val builder = AlertDialog.Builder(context).setTitle(action.titleResId)
         var onShowListener: DialogInterface.OnShowListener? = null
 
         when (action) {
             TaskAction.NEW, TaskAction.EDIT -> {
-                val view = LayoutInflater.from(context).inflate(R.layout.dialog_input, null)
-
+                val view = View.inflate(context, R.layout.dialog_input, null)
                 builder.setView(view).apply {
                     if (action == TaskAction.NEW) {
                         setPositiveButton(R.string.add) { _, _ ->
@@ -77,10 +113,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
                         }
                     } else {
                         if (position != null) {
-                            view.titleEditText.setText(/*TODO: tasks[position] - repeating code.*/
-                                tasks[position].title
-                            )
-                            view.descriptionEditText.setText(tasks[position].descriptions)
+                            view.titleEditText.setText(task?.title)
+                            view.descriptionEditText.setText(task?.descriptions)
                         }
                         setTitle(R.string.edit)
                         setPositiveButton(R.string.save) { _, _ ->
@@ -89,29 +123,26 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
                             if (position == null) {
                                 addTask(Task(title, description))
                             } else {
-                                editTask(
-                                    position,
-                                    Task(title, description, tasks[position].favorite)
-                                )
+                                if (task != null) {
+                                    editTask(
+                                        position,
+                                        Task(title, description, task.favorite)
+                                    )
+                                }
                             }
                         }
                     }
                 }.setNegativeButton(R.string.cancel) { dialog, _ ->
                     dialog.cancel()
                 }
-
                 onShowListener = DialogInterface.OnShowListener { dialog ->
                     if (dialog !is AlertDialog) return@OnShowListener
-
                     val button = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-
                     button.isEnabled = view.descriptionEditText.text.toString().isNotEmpty()
-
                     view.descriptionEditText.addTextChangedListener(object : TextWatcher {
                         override fun afterTextChanged(s: Editable) = Unit
                         override fun beforeTextChanged(
-                            s: CharSequence, start: Int,
-                            count: Int, after: Int
+                            s: CharSequence, start: Int, count: Int, after: Int
                         ) = Unit
 
                         override fun onTextChanged(
@@ -156,56 +187,5 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, View.OnClickListene
     private fun favorite(position: Int) {
         tasks[position].favorite = !tasks[position].favorite
         adapter.notifyDataSetChanged()
-    }
-
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.floatingActionButton -> showCreateTaskDialog(TaskAction.NEW)
-        }
-    }
-
-    override fun onViewHolderClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
-        showCreateTaskDialog(TaskAction.EDIT, position)
-    }
-
-    override fun onViewHolderLongClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
-        showCreateTaskDialog(TaskAction.DELETE, position)
-    }
-
-    override fun onViewHolderFavoriteClick(
-        holder: RecyclerView.ViewHolder,
-        position: Int,
-        id: Int
-    ) {
-        favorite(position)
-    }
-    /* TODO: Can be simplified with Single-expression function. */
-    /* TODO: Formatting issue. 2 new lines between blocks*/
-
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    /* TODO: Group class methods by functionality. e.g. lifecycle, super class overrides, implemented interfaces, private methods.*/
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val sortedTasks: List<Task>?
-        when (item.itemId) {
-            R.id.allItem -> {
-                /* TODO: Unimplemented functionality. Why this functionality break app logic? */
-            }
-            R.id.favoriteItem -> {
-                /* TODO: What is the issue in this block? Why this functionality break app logic?*/
-                sortedTasks = tasks.filter { it.favorite }
-                adapter.items = sortedTasks
-                adapter.notifyDataSetChanged()
-                /* TODO: Where is the return statement?.*/
-            }
-            R.id.aboutItem -> {
-                /* TODO: Unused code.*/
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

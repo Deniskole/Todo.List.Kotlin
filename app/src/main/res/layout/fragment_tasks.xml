@@ -17,10 +17,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/spacing_x2"
         android:background="@color/colorAccent"
         android:clickable="true"
-        android:src="@drawable/ic_add_black_24dp"
-        android:focusable="true" />
-    <!-- TODO:  android:layout_margin="16dp" ???-->
+        android:focusable="true"
+        android:src="@drawable/ic_add_white_24dp" />
 </RelativeLayout>

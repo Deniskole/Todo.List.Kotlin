@@ -12,15 +12,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="20dp"
+        android:padding="@dimen/spacing_x2"
         android:textSize="20sp" />
 
     <ImageView
         android:id="@+id/taskFavoriteImageView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/icon_small_size"
+        android:layout_height="@dimen/icon_small_size"
         android:layout_gravity="center_vertical"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="@dimen/spacing_x2"
         android:contentDescription="@string/favorite"
         android:src="@drawable/ic_favorite_gray_24dp" />
 </LinearLayout>
