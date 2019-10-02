@@ -7,10 +7,10 @@ import com.example.todolist.adapter.OnViewHolderLongClickListener
 import kotlinx.android.synthetic.main.task_list_item_t_d.view.*
 import java.lang.ref.WeakReference
 
-class TaskDescriptionViewHolder<L>(
+class TwoLineViewHolder<L>(
     parent: ViewGroup,
     listener: WeakReference<L>
-) : ViewHolder<L>(parent, listener, R.layout.task_list_item_d)
+) : ViewHolder<L>(parent, listener, R.layout.task_list_item_t_d)
         where L : OnViewHolderClickListener,
               L : OnViewHolderLongClickListener {
     init {

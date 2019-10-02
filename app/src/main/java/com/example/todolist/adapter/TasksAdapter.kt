@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
 import com.example.todolist.adapter.TaskItemType.DESCRIPTION_TASK
 import com.example.todolist.adapter.TaskItemType.TITLE_DESCRIPTION_TASK
-import com.example.todolist.adapter.holder.TaskDescriptionViewHolder
-import com.example.todolist.adapter.holder.TaskTitleDescriptionViewHolder
+import com.example.todolist.adapter.holder.SingleLineViewHolder
+import com.example.todolist.adapter.holder.TwoLineViewHolder
 import com.example.todolist.model.Task
 import kotlinx.android.synthetic.main.task_list_item_t_d.view.*
 import java.lang.ref.WeakReference
@@ -21,19 +21,21 @@ class TasksAdapter<L>(
     override fun getItemCount() = items.size
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == TITLE_DESCRIPTION_TASK.ordinal) {
-            TaskTitleDescriptionViewHolder(parent, weakListener)
+            TwoLineViewHolder(parent, weakListener)
         } else {
-            TaskDescriptionViewHolder(parent, weakListener)
+            SingleLineViewHolder(parent, weakListener)
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder.itemViewType) {
-            TITLE_DESCRIPTION_TASK.ordinal -> {
-                with(holder.itemView) {
-                    taskTitleTextView.text = items[position].title
-                    taskDescriptionTextView.text = items[position].descriptions
-                    if (items[position].favorite) {
+        val item: Task = items[position]
+
+        with(holder.itemView) {
+            when (holder.itemViewType) {
+                TITLE_DESCRIPTION_TASK.ordinal -> {
+                    taskTitleTextView.text = item.title
+                    taskDescriptionTextView.text = item.descriptions
+                    if (item.favorite) {
                         taskFavoriteImageView.setColorFilter(
                             ContextCompat.getColor(context, R.color.colorRed)
                         )
@@ -43,11 +45,9 @@ class TasksAdapter<L>(
                         )
                     }
                 }
-            }
-            DESCRIPTION_TASK.ordinal -> {
-                with(holder.itemView) {
+                DESCRIPTION_TASK.ordinal -> {
                     taskDescriptionTextView.text = items[position].descriptions
-                    if (items[position].favorite) {
+                    if (item.favorite) {
                         taskFavoriteImageView.setColorFilter(
                             ContextCompat.getColor(context, R.color.colorRed)
                         )
