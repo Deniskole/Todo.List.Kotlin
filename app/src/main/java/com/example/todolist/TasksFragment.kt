@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -26,10 +28,12 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     private val adapter = TasksAdapter(this)
     private lateinit var taskViewModel: TaskViewModel
     private var tasksList: List<Task>? = null
+    private var animation: Animation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        animation = AnimationUtils.loadAnimation(context, R.anim.myrotate)
         taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
         taskViewModel.allTasks.observe(this, Observer { tasks ->
             tasks?.let { it ->
@@ -79,7 +83,10 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.floatingActionButton -> actionTaskDialog(TaskAction.NEW)
+            R.id.floatingActionButton -> {
+                actionTaskDialog(TaskAction.NEW)
+                floatingActionButton.startAnimation(animation)
+            }
         }
     }
 
