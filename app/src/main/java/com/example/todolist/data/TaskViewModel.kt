@@ -3,8 +3,6 @@ package com.example.todolist.data
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.example.todolist.data.AppDatabase
-import com.example.todolist.data.TaskRepository
 import com.example.todolist.model.Task
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,12 +18,12 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     private val scope = CoroutineScope(coroutineContext)
 
     private val repository: TaskRepository
-    val allWords: LiveData<List<Task>>
+    val allTasks: LiveData<List<Task>>
 
     init {
         val tasksDao = AppDatabase.getDatabase(application).taskDao()
         repository = TaskRepository(tasksDao)
-        allWords = repository.allTasks
+        allTasks = repository.allTasks
     }
 
     fun insert(task: Task) = scope.launch(Dispatchers.IO) {

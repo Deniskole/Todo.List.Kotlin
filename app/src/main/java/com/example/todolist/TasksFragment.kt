@@ -13,10 +13,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todolist.data.TaskViewModel
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
+import com.example.todolist.data.TaskViewModel
 import com.example.todolist.model.Task
 import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
@@ -25,13 +25,17 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     View.OnClickListener {
     private val adapter = TasksAdapter(this)
     private lateinit var taskViewModel: TaskViewModel
+    private var tasksList: List<Task>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
-        taskViewModel.allWords.observe(this, Observer { tasks ->
-            tasks?.let { adapter.setWords(it) }
+        taskViewModel.allTasks.observe(this, Observer { tasks ->
+            tasks?.let { it ->
+                tasksList = it
+                tasksList?.let { adapter.setTasks(it) }
+            }
         })
         setHasOptionsMenu(true)
     }
@@ -61,12 +65,13 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.allItem -> {
+                tasksList?.let { adapter.setTasks(it) }
+            }
             R.id.doneItem -> {
-//                val sortedTasks: MutableList<Task>?
-//                sortedTasks = tasks.filter { it.favorite } as MutableList<Task>
-//                tasks.clear()
-//                tasks.addAll(sortedTasks)
-                adapter.notifyDataSetChanged()
+                var tasksListDone: List<Task>? = tasksList
+                tasksListDone = tasksListDone!!.filter { it.favorite }
+                adapter.setTasks(tasksListDone)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -80,8 +85,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onViewHolderClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
         when (id) {
-            R.id.taskFavoriteImageView -> favorite(position)
-            R.id.container -> actionTaskDialog(TaskAction.EDIT, position)
+            R.id.taskFavoriteImageView -> doneTask(adapter.getTask(position))
+            R.id.container_single, R.id.container_two -> actionTaskDialog(TaskAction.EDIT, position)
         }
     }
 
@@ -96,7 +101,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     private fun actionTaskDialog(action: TaskAction, position: Int? = null) {
 
-        val task: Task? = null
+        val task: Task? = position?.let { adapter.getTask(it) }
 
         val builder = AlertDialog.Builder(context).setTitle(action.titleResId)
         var onShowListener: DialogInterface.OnShowListener? = null
@@ -109,8 +114,10 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                     if (action == TaskAction.NEW) {
                         setPositiveButton(R.string.add) { _, _ ->
                             addTask(
-                                Task(view.titleEditText.text.toString(),
-                                    view.descriptionEditText.text.toString())
+                                Task(
+                                    view.titleEditText.text.toString(),
+                                    view.descriptionEditText.text.toString()
+                                )
                             )
                         }
                     } else {
@@ -127,8 +134,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                             } else {
                                 if (task != null) {
                                     editTask(
-                                        position,
-                                        Task(title, description, task.favorite)
+                                        Task(task.id, title, description, task.favorite)
                                     )
                                 }
                             }
@@ -161,7 +167,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             TaskAction.DELETE -> {
                 builder.setNegativeButton(R.string.cancel) { _, _ -> }
                     .setPositiveButton(R.string.delete) { _, _ ->
-                        if (position != null) deleteTask(position)
+                        if (position != null) deleteTask(adapter.getTask(position))
                     }
             }
         }
@@ -175,17 +181,16 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         taskViewModel.insert(task)
     }
 
-    private fun deleteTask(position: Int) {
-        adapter.notifyDataSetChanged()
+    private fun deleteTask(task: Task) {
+        taskViewModel.delete(task)
     }
 
-    private fun editTask(position: Int, task: Task) {
+    private fun editTask(task: Task) {
         taskViewModel.insert(task)
-        adapter.notifyDataSetChanged()
     }
 
-    private fun favorite(position: Int) {
-//        tasks[position].favorite = !tasks[position].favorite
-        adapter.notifyDataSetChanged()
+    private fun doneTask(task: Task) {
+        task.favorite = task.favorite != true
+        taskViewModel.insert(task)
     }
 }
