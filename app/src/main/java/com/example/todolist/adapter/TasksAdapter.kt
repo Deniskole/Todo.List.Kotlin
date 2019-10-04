@@ -42,7 +42,7 @@ class TasksAdapter<L>(
                     taskDescriptionTextView.text = item.descriptions
                     if (item.favorite) {
                         taskFavoriteImageView.setColorFilter(
-                            ContextCompat.getColor(context, R.color.colorRed)
+                            ContextCompat.getColor(context, R.color.colorPrimaryDark)
                         )
                     } else {
                         taskFavoriteImageView.setColorFilter(
@@ -54,14 +54,13 @@ class TasksAdapter<L>(
                     taskDescriptionTextView.text = tasks[position].descriptions
                     if (item.favorite) {
                         taskFavoriteImageView.setColorFilter(
-                            ContextCompat.getColor(context, R.color.colorRed)
+                            ContextCompat.getColor(context, R.color.colorPrimaryDark)
                         )
                     } else {
                         taskFavoriteImageView.setColorFilter(
                             ContextCompat.getColor(context, R.color.colorGray)
                         )
                     }
-
                 }
             }
         }

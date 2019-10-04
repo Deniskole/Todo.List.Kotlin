@@ -18,7 +18,7 @@
 
     <!-- region Task -->
     <string name="new_task">New task</string>
-    <string name="favorite_task">Favotite tasks</string>
+    <string name="done_tasks">Done tasks</string>
     <string name="all_tasks">All tasks</string>
     <string name="favorite">Favorite</string>
     <!-- endregion -->

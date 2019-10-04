@@ -40,5 +40,5 @@
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="@dimen/spacing_x2"
         android:contentDescription="@string/favorite"
-        android:src="@drawable/ic_favorite_gray_24dp" />
+        android:src="@drawable/ic_done_gray_24dp" />
 </LinearLayout>

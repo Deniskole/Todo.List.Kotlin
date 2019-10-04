@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.roomwordssample.TaskViewModel
+import com.example.todolist.data.TaskViewModel
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
@@ -61,7 +61,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.favoriteItem -> {
+            R.id.doneItem -> {
 //                val sortedTasks: MutableList<Task>?
 //                sortedTasks = tasks.filter { it.favorite } as MutableList<Task>
 //                tasks.clear()
