@@ -13,12 +13,12 @@ import kotlinx.android.synthetic.main.task_list_item_t_d.view.*
 import java.lang.ref.WeakReference
 
 class TasksAdapter<L>(
-    private var items: List<Task>,
     listener: L
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() where L : OnViewHolderClickListener,
                                                           L : OnViewHolderLongClickListener {
+    private var tasks = emptyList<Task>()
     private val weakListener = WeakReference(listener)
-    override fun getItemCount() = items.size
+    override fun getItemCount() = tasks.size
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == TITLE_DESCRIPTION_TASK.ordinal) {
             TwoLineViewHolder(parent, weakListener)
@@ -27,8 +27,13 @@ class TasksAdapter<L>(
         }
     }
 
+    internal fun setWords(tasks: List<Task>) {
+        this.tasks = tasks
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item: Task = items[position]
+        val item: Task = tasks[position]
 
         with(holder.itemView) {
             when (holder.itemViewType) {
@@ -46,7 +51,7 @@ class TasksAdapter<L>(
                     }
                 }
                 DESCRIPTION_TASK.ordinal -> {
-                    taskDescriptionTextView.text = items[position].descriptions
+                    taskDescriptionTextView.text = tasks[position].descriptions
                     if (item.favorite) {
                         taskFavoriteImageView.setColorFilter(
                             ContextCompat.getColor(context, R.color.colorRed)
@@ -56,13 +61,14 @@ class TasksAdapter<L>(
                             ContextCompat.getColor(context, R.color.colorGray)
                         )
                     }
+
                 }
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (!items[position].title.isNullOrBlank())
+        return if (!tasks[position].title.isNullOrBlank())
             TITLE_DESCRIPTION_TASK.ordinal
         else
             DESCRIPTION_TASK.ordinal

@@ -8,9 +8,12 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.android.roomwordssample.TaskViewModel
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
@@ -20,12 +23,16 @@ import kotlinx.android.synthetic.main.fragment_tasks.*
 
 class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongClickListener,
     View.OnClickListener {
-    private var tasks = mutableListOf<Task>()
-    private val adapter = TasksAdapter(tasks, this)
+    private val adapter = TasksAdapter(this)
+    private lateinit var taskViewModel: TaskViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
+        taskViewModel.allWords.observe(this, Observer { tasks ->
+            tasks?.let { adapter.setWords(it) }
+        })
         setHasOptionsMenu(true)
     }
 
@@ -55,10 +62,10 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.favoriteItem -> {
-                val sortedTasks: MutableList<Task>?
-                sortedTasks = tasks.filter { it.favorite } as MutableList<Task>
-                tasks.clear()
-                tasks.addAll(sortedTasks)
+//                val sortedTasks: MutableList<Task>?
+//                sortedTasks = tasks.filter { it.favorite } as MutableList<Task>
+//                tasks.clear()
+//                tasks.addAll(sortedTasks)
                 adapter.notifyDataSetChanged()
             }
         }
@@ -89,14 +96,11 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     private fun actionTaskDialog(action: TaskAction, position: Int? = null) {
 
-        var task: Task? = null
-
-        if (position != null) {
-            task = tasks[position]
-        }
+        val task: Task? = null
 
         val builder = AlertDialog.Builder(context).setTitle(action.titleResId)
         var onShowListener: DialogInterface.OnShowListener? = null
+
 
         when (action) {
             TaskAction.NEW, TaskAction.EDIT -> {
@@ -105,10 +109,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                     if (action == TaskAction.NEW) {
                         setPositiveButton(R.string.add) { _, _ ->
                             addTask(
-                                Task(
-                                    view.titleEditText.text.toString(),
-                                    view.descriptionEditText.text.toString()
-                                )
+                                Task(view.titleEditText.text.toString(),
+                                    view.descriptionEditText.text.toString())
                             )
                         }
                     } else {
@@ -170,22 +172,20 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     }
 
     private fun addTask(task: Task) {
-        tasks.add(task)
-        adapter.notifyDataSetChanged()
+        taskViewModel.insert(task)
     }
 
     private fun deleteTask(position: Int) {
-        tasks.removeAt(position)
         adapter.notifyDataSetChanged()
     }
 
     private fun editTask(position: Int, task: Task) {
-        tasks[position] = task
+        taskViewModel.insert(task)
         adapter.notifyDataSetChanged()
     }
 
     private fun favorite(position: Int) {
-        tasks[position].favorite = !tasks[position].favorite
+//        tasks[position].favorite = !tasks[position].favorite
         adapter.notifyDataSetChanged()
     }
 }
