@@ -8,12 +8,14 @@ class TaskRepository(private val taskDao: TaskDao) {
 
     val allTasks: LiveData<List<Task>> = taskDao.getAllTasks()
 
+    /* TODO: Why is this method suspended?*/
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun insert(task: Task) {
         taskDao.insertTask(task)
     }
 
+    /* TODO: Why is this method suspended?*/
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun delete(task: Task) {

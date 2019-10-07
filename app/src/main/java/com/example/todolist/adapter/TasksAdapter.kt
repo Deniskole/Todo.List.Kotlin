@@ -41,6 +41,8 @@ class TasksAdapter<L>(
         val task: Task = tasks[position]
 
         with(holder.itemView) {
+            /*TODO: Reuse common code. Avoid code duplication.*/
+            /*TODO: container_single && container_two is???*/
             when (holder.itemViewType) {
                 TITLE_DESCRIPTION_TASK.ordinal -> {
                     taskTitleTextView.text = task.title

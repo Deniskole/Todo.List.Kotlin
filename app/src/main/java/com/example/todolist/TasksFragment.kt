@@ -74,6 +74,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             }
             R.id.doneItem -> {
                 var tasksListDone: List<Task>? = tasksList
+                /*TODO: `!!` ????! */
                 tasksListDone = tasksListDone!!.filter { it.favorite }
                 adapter.setTasks(tasksListDone)
             }
@@ -93,6 +94,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     override fun onViewHolderClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
         when (id) {
             R.id.taskFavoriteImageView -> doneTask(adapter.getTask(position))
+            /* TODO: R.id.container_single, R.id.container_two ? */
             R.id.container_single, R.id.container_two -> actionTaskDialog(TaskAction.EDIT, position)
         }
     }
