@@ -34,6 +34,7 @@ class TasksAdapter<L>(
             when (holder.itemViewType) {
                 TITLE_DESCRIPTION_TASK.ordinal -> {
                     taskTitleTextView.text = item.title
+                    /*TODO: Check the import for this property. Do you see troubles with it? */
                     taskDescriptionTextView.text = item.descriptions
                     if (item.favorite) {
                         taskFavoriteImageView.setColorFilter(
@@ -66,6 +67,17 @@ class TasksAdapter<L>(
             TITLE_DESCRIPTION_TASK.ordinal
         else
             DESCRIPTION_TASK.ordinal
+
+        /*
+
+        TODO: Invalid format for the statement. Please look at this guide https://developer.android.com/kotlin/style-guide#formatting.
+
+        if (!items[position].title.isNullOrBlank())
+            TITLE_DESCRIPTION_TASK.ordinal
+        else
+            DESCRIPTION_TASK.ordinal
+
+        */
     }
 }
 

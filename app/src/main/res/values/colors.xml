@@ -4,5 +4,5 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorGray">#838181</color>
-    <color name="colorRed">#B60D4B</color>
+    <color name="colorRed">#B60D4B</color> <!--TODO: Unnecessary "color" prefix.-->
 </resources>

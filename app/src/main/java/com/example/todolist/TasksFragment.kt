@@ -102,6 +102,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             TaskAction.NEW, TaskAction.EDIT -> {
                 val view = View.inflate(context, R.layout.dialog_input, null)
                 builder.setView(view).apply {
+                    // TODO: The code below can be simplified by checking the task instead of the action type
                     if (action == TaskAction.NEW) {
                         setPositiveButton(R.string.add) { _, _ ->
                             addTask(
@@ -112,15 +113,15 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                             )
                         }
                     } else {
-                        if (position != null) {
+                        if (position != null/* TODO: Code duplication. */) {
                             view.titleEditText.setText(task?.title)
                             view.descriptionEditText.setText(task?.descriptions)
                         }
-                        setTitle(R.string.edit)
+                        setTitle(R.string.edit) // TODO: Why do you need this call?
                         setPositiveButton(R.string.save) { _, _ ->
                             val title = view.titleEditText.text.toString()
                             val description = view.descriptionEditText.text.toString()
-                            if (position == null) {
+                            if (position == null/* TODO: Code duplication. */) {
                                 addTask(Task(title, description))
                             } else {
                                 if (task != null) {

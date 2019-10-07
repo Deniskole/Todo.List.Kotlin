@@ -23,7 +23,7 @@ abstract class ViewHolder<L>(
                     it.onViewHolderLongClick(this, adapterPosition, v.id)
                 } else false
             } ?: false
-        }
+        } // TODO: Create listener in the same way as for the clicks.
     }
 
     protected fun createClickListener() = View.OnClickListener { v ->
