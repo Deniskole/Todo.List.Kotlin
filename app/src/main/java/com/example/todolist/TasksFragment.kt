@@ -27,7 +27,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     View.OnClickListener {
     private val adapter = TasksAdapter(this)
     private lateinit var taskViewModel: TaskViewModel
-    private var tasksList: List<Task>? = null
+    private lateinit var tasksList: List<Task>
     private var animation: Animation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +38,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         taskViewModel.allTasks.observe(this, Observer { tasks ->
             tasks?.let { it ->
                 tasksList = it
-                tasksList?.let { adapter.setTasks(it) }
+                tasksList.let { adapter.setTasks(it) }
             }
         })
         setHasOptionsMenu(true)
@@ -70,12 +70,11 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.allItem -> {
-                tasksList?.let { adapter.setTasks(it) }
+                tasksList.let { adapter.setTasks(it) }
             }
             R.id.doneItem -> {
-                var tasksListDone: List<Task>? = tasksList
-                /*TODO: `!!` ????! */
-                tasksListDone = tasksListDone!!.filter { it.favorite }
+                var tasksListDone: List<Task> = tasksList
+                tasksListDone = tasksListDone.filter { it.favorite }
                 adapter.setTasks(tasksListDone)
             }
         }
@@ -135,7 +134,6 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                             view.titleEditText.setText(task?.title)
                             view.descriptionEditText.setText(task?.descriptions)
                         }
-                        setTitle(R.string.edit) // TODO: Why do you need this call?
                         setPositiveButton(R.string.save) { _, _ ->
                             val title = view.titleEditText.text.toString()
                             val description = view.descriptionEditText.text.toString()

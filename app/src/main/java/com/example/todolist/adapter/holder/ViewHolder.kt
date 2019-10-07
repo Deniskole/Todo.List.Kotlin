@@ -17,13 +17,7 @@ abstract class ViewHolder<L>(
 ) {
     init {
         itemView.setOnClickListener(createClickListener())
-        itemView.setOnLongClickListener { v ->
-            return@setOnLongClickListener listener.get()?.let {
-                if (it is OnViewHolderLongClickListener) {
-                    it.onViewHolderLongClick(this, adapterPosition, v.id)
-                } else false
-            } ?: false
-        } // TODO: Create listener in the same way as for the clicks.
+        itemView.setOnLongClickListener(createLongClickListener())
     }
 
     protected fun createClickListener() = View.OnClickListener { v ->
@@ -32,6 +26,14 @@ abstract class ViewHolder<L>(
                 it.onViewHolderClick(this, adapterPosition, v.id)
             }
         }
+    }
+
+    protected fun createLongClickListener() = View.OnLongClickListener { v ->
+        listener.get()?.let {
+            if (it is OnViewHolderLongClickListener) {
+                it.onViewHolderLongClick(this, adapterPosition, v.id)
+            } else false
+        } ?: false
     }
 }
 

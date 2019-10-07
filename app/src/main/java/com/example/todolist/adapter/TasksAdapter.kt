@@ -4,8 +4,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
-import com.example.todolist.adapter.TaskItemType.DESCRIPTION_TASK
-import com.example.todolist.adapter.TaskItemType.TITLE_DESCRIPTION_TASK
+import com.example.todolist.adapter.TaskItemType.DESCRIPTION
+import com.example.todolist.adapter.TaskItemType.TITLE_AND_DESCRIPTION
 import com.example.todolist.adapter.holder.SingleLineViewHolder
 import com.example.todolist.adapter.holder.TwoLineViewHolder
 import com.example.todolist.model.Task
@@ -23,7 +23,7 @@ class TasksAdapter<L>(
     private val weakListener = WeakReference(listener)
     override fun getItemCount() = tasks.size
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == TITLE_DESCRIPTION_TASK.ordinal) {
+        return if (viewType == TITLE_AND_DESCRIPTION.ordinal) {
             TwoLineViewHolder(parent, weakListener)
         } else {
             SingleLineViewHolder(parent, weakListener)
@@ -44,7 +44,7 @@ class TasksAdapter<L>(
             /*TODO: Reuse common code. Avoid code duplication.*/
             /*TODO: container_single && container_two is???*/
             when (holder.itemViewType) {
-                TITLE_DESCRIPTION_TASK.ordinal -> {
+                TITLE_AND_DESCRIPTION.ordinal -> {
                     taskTitleTextView.text = task.title
                     /*TODO: Check the import for this property. Do you see troubles with it? */
                     taskDescriptionTextView.text = task.descriptions
@@ -70,7 +70,7 @@ class TasksAdapter<L>(
                         )
                     }
                 }
-                DESCRIPTION_TASK.ordinal -> {
+                DESCRIPTION.ordinal -> {
                     taskDescriptionTextView.text = tasks[position].descriptions
                     if (task.favorite) {
                         container_single.setBackgroundColor(
@@ -98,23 +98,10 @@ class TasksAdapter<L>(
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (!tasks[position].title.isNullOrBlank())
-            TITLE_DESCRIPTION_TASK.ordinal
-        else
-            DESCRIPTION_TASK.ordinal
-
-        /*
-
-        TODO: Invalid format for the statement. Please look at this guide https://developer.android.com/kotlin/style-guide#formatting.
-
-        if (!items[position].title.isNullOrBlank())
-            TITLE_DESCRIPTION_TASK.ordinal
-        else
-            DESCRIPTION_TASK.ordinal
-
-        */
-    }
+    override fun getItemViewType(position: Int) = if (!tasks[position].title.isNullOrBlank())
+        TITLE_AND_DESCRIPTION.ordinal
+    else
+        DESCRIPTION.ordinal
 }
 
 
