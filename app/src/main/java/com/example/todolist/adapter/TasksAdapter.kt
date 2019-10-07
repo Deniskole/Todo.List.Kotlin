@@ -9,16 +9,19 @@ import com.example.todolist.adapter.TaskItemType.TITLE_DESCRIPTION_TASK
 import com.example.todolist.adapter.holder.SingleLineViewHolder
 import com.example.todolist.adapter.holder.TwoLineViewHolder
 import com.example.todolist.model.Task
+import kotlinx.android.synthetic.main.task_list_item_d.view.*
 import kotlinx.android.synthetic.main.task_list_item_t_d.view.*
+import kotlinx.android.synthetic.main.task_list_item_t_d.view.taskDescriptionTextView
+import kotlinx.android.synthetic.main.task_list_item_t_d.view.taskFavoriteImageView
 import java.lang.ref.WeakReference
 
 class TasksAdapter<L>(
-    private var items: List<Task>,
     listener: L
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() where L : OnViewHolderClickListener,
                                                           L : OnViewHolderLongClickListener {
+    private var tasks = emptyList<Task>()
     private val weakListener = WeakReference(listener)
-    override fun getItemCount() = items.size
+    override fun getItemCount() = tasks.size
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == TITLE_DESCRIPTION_TASK.ordinal) {
             TwoLineViewHolder(parent, weakListener)
@@ -27,32 +30,63 @@ class TasksAdapter<L>(
         }
     }
 
+    fun getTask(position: Int): Task = tasks[position]
+
+    internal fun setTasks(tasks: List<Task>) {
+        this.tasks = tasks
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item: Task = items[position]
+        val task: Task = tasks[position]
 
         with(holder.itemView) {
             when (holder.itemViewType) {
                 TITLE_DESCRIPTION_TASK.ordinal -> {
-                    taskTitleTextView.text = item.title
+                    taskTitleTextView.text = task.title
                     /*TODO: Check the import for this property. Do you see troubles with it? */
-                    taskDescriptionTextView.text = item.descriptions
-                    if (item.favorite) {
+                    taskDescriptionTextView.text = task.descriptions
+                    if (task.favorite) {
+                        container_two.setBackgroundColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.colorTeal
+                            )
+                        )
                         taskFavoriteImageView.setColorFilter(
-                            ContextCompat.getColor(context, R.color.colorRed)
+                            ContextCompat.getColor(context, R.color.colorPrimaryDark)
                         )
                     } else {
+                        container_two.setBackgroundColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.colorWhite
+                            )
+                        )
                         taskFavoriteImageView.setColorFilter(
                             ContextCompat.getColor(context, R.color.colorGray)
                         )
                     }
                 }
                 DESCRIPTION_TASK.ordinal -> {
-                    taskDescriptionTextView.text = items[position].descriptions
-                    if (item.favorite) {
+                    taskDescriptionTextView.text = tasks[position].descriptions
+                    if (task.favorite) {
+                        container_single.setBackgroundColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.colorTeal
+                            )
+                        )
                         taskFavoriteImageView.setColorFilter(
-                            ContextCompat.getColor(context, R.color.colorRed)
+                            ContextCompat.getColor(context, R.color.colorPrimaryDark)
                         )
                     } else {
+                        container_single.setBackgroundColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.colorWhite
+                            )
+                        )
                         taskFavoriteImageView.setColorFilter(
                             ContextCompat.getColor(context, R.color.colorGray)
                         )
@@ -63,7 +97,7 @@ class TasksAdapter<L>(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (!items[position].title.isNullOrBlank())
+        return if (!tasks[position].title.isNullOrBlank())
             TITLE_DESCRIPTION_TASK.ordinal
         else
             DESCRIPTION_TASK.ordinal

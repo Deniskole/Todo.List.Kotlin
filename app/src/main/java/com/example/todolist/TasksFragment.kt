@@ -7,25 +7,40 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
+import com.example.todolist.data.TaskViewModel
 import com.example.todolist.model.Task
 import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 
 class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongClickListener,
     View.OnClickListener {
-    private var tasks = mutableListOf<Task>()
-    private val adapter = TasksAdapter(tasks, this)
+    private val adapter = TasksAdapter(this)
+    private lateinit var taskViewModel: TaskViewModel
+    private var tasksList: List<Task>? = null
+    private var animation: Animation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        animation = AnimationUtils.loadAnimation(context, R.anim.myrotate)
+        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
+        taskViewModel.allTasks.observe(this, Observer { tasks ->
+            tasks?.let { it ->
+                tasksList = it
+                tasksList?.let { adapter.setTasks(it) }
+            }
+        })
         setHasOptionsMenu(true)
     }
 
@@ -54,12 +69,13 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.favoriteItem -> {
-                val sortedTasks: MutableList<Task>?
-                sortedTasks = tasks.filter { it.favorite } as MutableList<Task>
-                tasks.clear()
-                tasks.addAll(sortedTasks)
-                adapter.notifyDataSetChanged()
+            R.id.allItem -> {
+                tasksList?.let { adapter.setTasks(it) }
+            }
+            R.id.doneItem -> {
+                var tasksListDone: List<Task>? = tasksList
+                tasksListDone = tasksListDone!!.filter { it.favorite }
+                adapter.setTasks(tasksListDone)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -67,14 +83,17 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.floatingActionButton -> actionTaskDialog(TaskAction.NEW)
+            R.id.floatingActionButton -> {
+                actionTaskDialog(TaskAction.NEW)
+                floatingActionButton.startAnimation(animation)
+            }
         }
     }
 
     override fun onViewHolderClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
         when (id) {
-            R.id.taskFavoriteImageView -> favorite(position)
-            R.id.container -> actionTaskDialog(TaskAction.EDIT, position)
+            R.id.taskFavoriteImageView -> doneTask(adapter.getTask(position))
+            R.id.container_single, R.id.container_two -> actionTaskDialog(TaskAction.EDIT, position)
         }
     }
 
@@ -89,14 +108,11 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     private fun actionTaskDialog(action: TaskAction, position: Int? = null) {
 
-        var task: Task? = null
-
-        if (position != null) {
-            task = tasks[position]
-        }
+        val task: Task? = position?.let { adapter.getTask(it) }
 
         val builder = AlertDialog.Builder(context).setTitle(action.titleResId)
         var onShowListener: DialogInterface.OnShowListener? = null
+
 
         when (action) {
             TaskAction.NEW, TaskAction.EDIT -> {
@@ -126,8 +142,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                             } else {
                                 if (task != null) {
                                     editTask(
-                                        position,
-                                        Task(title, description, task.favorite)
+                                        Task(task.id, title, description, task.favorite)
                                     )
                                 }
                             }
@@ -160,7 +175,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             TaskAction.DELETE -> {
                 builder.setNegativeButton(R.string.cancel) { _, _ -> }
                     .setPositiveButton(R.string.delete) { _, _ ->
-                        if (position != null) deleteTask(position)
+                        if (position != null) deleteTask(adapter.getTask(position))
                     }
             }
         }
@@ -171,22 +186,19 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     }
 
     private fun addTask(task: Task) {
-        tasks.add(task)
-        adapter.notifyDataSetChanged()
+        taskViewModel.insert(task)
     }
 
-    private fun deleteTask(position: Int) {
-        tasks.removeAt(position)
-        adapter.notifyDataSetChanged()
+    private fun deleteTask(task: Task) {
+        taskViewModel.delete(task)
     }
 
-    private fun editTask(position: Int, task: Task) {
-        tasks[position] = task
-        adapter.notifyDataSetChanged()
+    private fun editTask(task: Task) {
+        taskViewModel.insert(task)
     }
 
-    private fun favorite(position: Int) {
-        tasks[position].favorite = !tasks[position].favorite
-        adapter.notifyDataSetChanged()
+    private fun doneTask(task: Task) {
+        task.favorite = task.favorite != true
+        taskViewModel.insert(task)
     }
 }

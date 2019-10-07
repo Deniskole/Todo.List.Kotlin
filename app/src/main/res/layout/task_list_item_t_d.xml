@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+    android:id="@+id/container_two"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -21,6 +21,7 @@
             android:textColor="@color/colorPrimaryDark"
             android:textSize="15sp"
             android:textStyle="bold"
+
             tools:ignore="RtlSymmetry" />
 
         <TextView
@@ -29,6 +30,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/spacing_x2"
             android:paddingBottom="@dimen/spacing_x2"
+            android:textColor="@color/colorGray"
             android:textSize="20sp"
             tools:ignore="RtlSymmetry" />
     </LinearLayout>
@@ -40,5 +42,5 @@
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="@dimen/spacing_x2"
         android:contentDescription="@string/favorite"
-        android:src="@drawable/ic_favorite_gray_24dp" />
+        android:src="@drawable/ic_done_gray_24dp" />
 </LinearLayout>

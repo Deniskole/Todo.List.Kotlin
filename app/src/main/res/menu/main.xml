@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
         android:id="@+id/allItem"
         android:title="@string/all_tasks" />
     <item
-        android:id="@+id/favoriteItem"
-        android:title="@string/favorite_task" />
-    <item
-        android:id="@+id/aboutItem"
-        android:title="@string/about" />
+        android:id="@+id/doneItem"
+        android:title="@string/done_tasks" />
 </menu>
