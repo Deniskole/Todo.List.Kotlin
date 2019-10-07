@@ -1,5 +1,6 @@
 package com.example.todolist.adapter
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -9,10 +10,7 @@ import com.example.todolist.adapter.TaskItemType.TITLE_AND_DESCRIPTION
 import com.example.todolist.adapter.holder.SingleLineViewHolder
 import com.example.todolist.adapter.holder.TwoLineViewHolder
 import com.example.todolist.model.Task
-import kotlinx.android.synthetic.main.task_list_item_d.view.*
 import kotlinx.android.synthetic.main.task_list_item_t_d.view.*
-import kotlinx.android.synthetic.main.task_list_item_t_d.view.taskDescriptionTextView
-import kotlinx.android.synthetic.main.task_list_item_t_d.view.taskFavoriteImageView
 import java.lang.ref.WeakReference
 
 class TasksAdapter<L>(
@@ -41,57 +39,26 @@ class TasksAdapter<L>(
         val task: Task = tasks[position]
 
         with(holder.itemView) {
-            /*TODO: Reuse common code. Avoid code duplication.*/
-            /*TODO: container_single && container_two is???*/
             when (holder.itemViewType) {
                 TITLE_AND_DESCRIPTION.ordinal -> {
                     taskTitleTextView.text = task.title
-                    /*TODO: Check the import for this property. Do you see troubles with it? */
                     taskDescriptionTextView.text = task.descriptions
                     if (task.favorite) {
-                        container_two.setBackgroundColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.colorTeal
-                            )
-                        )
-                        taskFavoriteImageView.setColorFilter(
-                            ContextCompat.getColor(context, R.color.colorPrimaryDark)
-                        )
+                        setBackgroundColor(holder.itemView, R.color.colorTeal)
+                        setTaskColor(holder.itemView, R.color.colorPrimaryDark)
                     } else {
-                        container_two.setBackgroundColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.colorWhite
-                            )
-                        )
-                        taskFavoriteImageView.setColorFilter(
-                            ContextCompat.getColor(context, R.color.colorGray)
-                        )
+                        setBackgroundColor(holder.itemView, R.color.colorWhite)
+                        setTaskColor(holder.itemView, R.color.colorGray)
                     }
                 }
                 DESCRIPTION.ordinal -> {
                     taskDescriptionTextView.text = tasks[position].descriptions
                     if (task.favorite) {
-                        container_single.setBackgroundColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.colorTeal
-                            )
-                        )
-                        taskFavoriteImageView.setColorFilter(
-                            ContextCompat.getColor(context, R.color.colorPrimaryDark)
-                        )
+                        setBackgroundColor(holder.itemView, R.color.colorTeal)
+                        setTaskColor(holder.itemView, R.color.colorPrimaryDark)
                     } else {
-                        container_single.setBackgroundColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.colorWhite
-                            )
-                        )
-                        taskFavoriteImageView.setColorFilter(
-                            ContextCompat.getColor(context, R.color.colorGray)
-                        )
+                        setBackgroundColor(holder.itemView, R.color.colorWhite)
+                        setTaskColor(holder.itemView, R.color.colorGray)
                     }
                 }
             }
@@ -103,5 +70,19 @@ class TasksAdapter<L>(
     else
         DESCRIPTION.ordinal
 }
+
+private fun View.setTaskColor(view: View, color: Int) {
+    view.taskFavoriteImageView.setColorFilter(
+        ContextCompat.getColor(context, color)
+    )
+}
+
+private fun View.setBackgroundColor(view: View, color: Int) {
+    view.container.setBackgroundColor(
+        ContextCompat.getColor(context, color)
+    )
+}
+
+
 
 

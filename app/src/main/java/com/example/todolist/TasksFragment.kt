@@ -93,8 +93,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     override fun onViewHolderClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
         when (id) {
             R.id.taskFavoriteImageView -> doneTask(adapter.getTask(position))
-            /* TODO: R.id.container_single, R.id.container_two ? */
-            R.id.container_single, R.id.container_two -> actionTaskDialog(TaskAction.EDIT, position)
+            R.id.container -> actionTaskDialog(TaskAction.EDIT, position)
         }
     }
 
@@ -113,7 +112,6 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
         val builder = AlertDialog.Builder(context).setTitle(action.titleResId)
         var onShowListener: DialogInterface.OnShowListener? = null
-
 
         when (action) {
             TaskAction.NEW, TaskAction.EDIT -> {
