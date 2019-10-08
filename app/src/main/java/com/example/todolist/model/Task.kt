@@ -5,7 +5,7 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "task_table")
-class Task constructor(
+data class Task constructor(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val title: String? = null,

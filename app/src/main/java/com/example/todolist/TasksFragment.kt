@@ -107,9 +107,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     }
 
     private fun actionTaskDialog(action: TaskAction, position: Int? = null) {
-
         val task: Task? = position?.let { adapter.getTask(it) }
-
         val builder = AlertDialog.Builder(context).setTitle(action.titleResId)
         var onShowListener: DialogInterface.OnShowListener? = null
 
@@ -117,8 +115,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             TaskAction.NEW, TaskAction.EDIT -> {
                 val view = View.inflate(context, R.layout.dialog_input, null)
                 builder.setView(view).apply {
-                    // TODO: The code below can be simplified by checking the task instead of the action type
-                    if (action == TaskAction.NEW) {
+                    if (task == null) {
                         setPositiveButton(R.string.add) { _, _ ->
                             addTask(
                                 Task(
@@ -128,22 +125,12 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                             )
                         }
                     } else {
-                        if (position != null/* TODO: Code duplication. */) {
-                            view.titleEditText.setText(task?.title)
-                            view.descriptionEditText.setText(task?.descriptions)
-                        }
+                        view.titleEditText.setText(task.title)
+                        view.descriptionEditText.setText(task.descriptions)
                         setPositiveButton(R.string.save) { _, _ ->
                             val title = view.titleEditText.text.toString()
                             val description = view.descriptionEditText.text.toString()
-                            if (position == null/* TODO: Code duplication. */) {
-                                addTask(Task(title, description))
-                            } else {
-                                if (task != null) {
-                                    editTask(
-                                        Task(task.id, title, description, task.favorite)
-                                    )
-                                }
-                            }
+                            editTask(task.copy(title = title, descriptions = description))
                         }
                     }
                 }.setNegativeButton(R.string.cancel) { dialog, _ ->
