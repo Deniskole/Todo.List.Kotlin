@@ -3,7 +3,9 @@ package com.example.todolist
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
@@ -30,8 +32,16 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     private lateinit var tasksList: List<Task>
     private var animation: Animation? = null
 
+    private var currentTheme: Int = R.style.AppTheme
+    private lateinit var sharedPref: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sharedPref = PreferenceManager
+            .getDefaultSharedPreferences(context)
+        currentTheme = sharedPref.getInt("current_theme", R.style.AppTheme)
+        context?.setTheme(currentTheme)
 
         animation = AnimationUtils.loadAnimation(context, R.anim.myrotate)
         taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
@@ -43,6 +53,16 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         })
         setHasOptionsMenu(true)
     }
+
+
+    override fun onResume() {
+        super.onResume()
+        val theme = sharedPref.getInt("current_theme", R.style.AppTheme)
+        if (currentTheme != theme) {
+            recreateFragment()
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -67,6 +87,14 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        val themeId = sharedPref.getInt("current_theme", R.style.AppTheme)
+        menu.getItem(2).isChecked = themeId != R.style.AppTheme
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.allItem -> {
@@ -80,14 +108,29 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             R.id.mySwitch -> {
                 if (item.isChecked) {
                     item.isChecked = false
-                    context?.setTheme(R.style.AppTheme)
+                    sharedPref
+                        .edit()
+                        .putInt("current_theme", R.style.AppTheme)
+                        .apply()
+                    recreateFragment()
                 } else {
-                    context?.setTheme(R.style.AppThemeNight)
                     item.isChecked = true
+                    sharedPref
+                        .edit()
+                        .putInt("current_theme", R.style.AppThemeNight)
+                        .apply()
+                    recreateFragment()
                 }
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+
+    private fun recreateFragment() {
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.container, TasksFragment(), TasksFragment::class.java.name)
+            ?.commit()
     }
 
 
