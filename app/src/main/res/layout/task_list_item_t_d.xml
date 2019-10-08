@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/spacing_x2"
             android:paddingBottom="@dimen/spacing_x2"
-            android:textColor="@color/colorGray"
+            android:textColor="@color/gray"
             android:textSize="20sp"
             tools:ignore="RtlSymmetry" />
     </LinearLayout>

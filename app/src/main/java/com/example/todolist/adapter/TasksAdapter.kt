@@ -44,21 +44,21 @@ class TasksAdapter<L>(
                     taskTitleTextView.text = task.title
                     taskDescriptionTextView.text = task.descriptions
                     if (task.favorite) {
-                        setBackgroundColor(holder.itemView, R.color.colorTeal)
+                        setBackgroundColor(holder.itemView, R.color.teal)
                         setTaskColor(holder.itemView, R.color.colorPrimaryDark)
                     } else {
-                        setBackgroundColor(holder.itemView, R.color.colorWhite)
-                        setTaskColor(holder.itemView, R.color.colorGray)
+                        setBackgroundColor(holder.itemView, R.color.white)
+                        setTaskColor(holder.itemView, R.color.gray)
                     }
                 }
                 DESCRIPTION.ordinal -> {
                     taskDescriptionTextView.text = tasks[position].descriptions
                     if (task.favorite) {
-                        setBackgroundColor(holder.itemView, R.color.colorTeal)
+                        setBackgroundColor(holder.itemView, R.color.teal)
                         setTaskColor(holder.itemView, R.color.colorPrimaryDark)
                     } else {
-                        setBackgroundColor(holder.itemView, R.color.colorWhite)
-                        setTaskColor(holder.itemView, R.color.colorGray)
+                        setBackgroundColor(holder.itemView, R.color.white)
+                        setTaskColor(holder.itemView, R.color.gray)
                     }
                 }
             }

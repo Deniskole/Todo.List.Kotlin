@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:padding="@dimen/spacing_x2"
-        android:textColor="@color/colorGray"
+        android:textColor="@color/gray"
         android:textSize="20sp" />
 
     <ImageView

@@ -77,9 +77,19 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                 tasksListDone = tasksListDone.filter { it.favorite }
                 adapter.setTasks(tasksListDone)
             }
+            R.id.mySwitch -> {
+                if (item.isChecked) {
+                    item.isChecked = false
+                    context?.setTheme(R.style.AppTheme)
+                } else {
+                    context?.setTheme(R.style.AppThemeNight)
+                    item.isChecked = true
+                }
+            }
         }
         return super.onOptionsItemSelected(item)
     }
+
 
     override fun onClick(v: View) {
         when (v.id) {
