@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -32,7 +33,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     private lateinit var tasksList: List<Task>
     private var animation: Animation? = null
 
-    private var currentTheme: Int = R.style.AppTheme
+    private val MODE_NIGHT = "MODE_NIGHT"
+    private var modeNight = false
     private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +42,13 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
         sharedPref = PreferenceManager
             .getDefaultSharedPreferences(context)
-        currentTheme = sharedPref.getInt("current_theme", R.style.AppTheme)
-        context?.setTheme(currentTheme)
+        modeNight = sharedPref.getBoolean(MODE_NIGHT, false)
+
+        if (modeNight) {
+            setNightMode(true)
+        } else {
+            setNightMode(false)
+        }
 
         animation = AnimationUtils.loadAnimation(context, R.anim.myrotate)
         taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
@@ -53,16 +60,6 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         })
         setHasOptionsMenu(true)
     }
-
-
-    override fun onResume() {
-        super.onResume()
-        val theme = sharedPref.getInt("current_theme", R.style.AppTheme)
-        if (currentTheme != theme) {
-            recreateFragment()
-        }
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -91,8 +88,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
 
-        val themeId = sharedPref.getInt("current_theme", R.style.AppTheme)
-        menu.getItem(2).isChecked = themeId != R.style.AppTheme
+        val themeMode = sharedPref.getBoolean(MODE_NIGHT, false)
+        menu.getItem(2).isChecked = themeMode
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -110,29 +107,21 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                     item.isChecked = false
                     sharedPref
                         .edit()
-                        .putInt("current_theme", R.style.AppTheme)
+                        .putBoolean(MODE_NIGHT, false)
                         .apply()
-                    recreateFragment()
+                    setNightMode(false)
                 } else {
                     item.isChecked = true
                     sharedPref
                         .edit()
-                        .putInt("current_theme", R.style.AppThemeNight)
+                        .putBoolean(MODE_NIGHT, true)
                         .apply()
-                    recreateFragment()
+                    setNightMode(true)
                 }
             }
         }
         return super.onOptionsItemSelected(item)
     }
-
-
-    private fun recreateFragment() {
-        activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.container, TasksFragment(), TasksFragment::class.java.name)
-            ?.commit()
-    }
-
 
     override fun onClick(v: View) {
         when (v.id) {
@@ -221,6 +210,14 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         val dialog = builder.create()
         onShowListener?.also { dialog.setOnShowListener(it) }
         dialog.show()
+    }
+
+    private fun setNightMode(flag: Boolean) {
+        if (flag) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 
     private fun addTask(task: Task) {

@@ -47,7 +47,7 @@ class TasksAdapter<L>(
                         setBackgroundColor(holder.itemView, R.color.teal)
                         setTaskColor(holder.itemView, R.color.colorPrimaryDark)
                     } else {
-                        setBackgroundColor(holder.itemView, R.color.white)
+                        setBackgroundColor(holder.itemView, R.color.transparent)
                         setTaskColor(holder.itemView, R.color.gray)
                     }
                 }
@@ -57,7 +57,7 @@ class TasksAdapter<L>(
                         setBackgroundColor(holder.itemView, R.color.teal)
                         setTaskColor(holder.itemView, R.color.colorPrimaryDark)
                     } else {
-                        setBackgroundColor(holder.itemView, R.color.white)
+                        setBackgroundColor(holder.itemView, R.color.transparent)
                         setTaskColor(holder.itemView, R.color.gray)
                     }
                 }
