@@ -32,7 +32,6 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     private lateinit var taskViewModel: TaskViewModel
     private lateinit var tasksList: List<Task>
     private var animation: Animation? = null
-
     private val MODE_NIGHT = "MODE_NIGHT"
     private var modeNight = false
     private lateinit var sharedPref: SharedPreferences
@@ -103,21 +102,9 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                 adapter.setTasks(tasksListDone)
             }
             R.id.mySwitch -> {
-                if (item.isChecked) {
-                    item.isChecked = false
-                    sharedPref
-                        .edit()
-                        .putBoolean(MODE_NIGHT, false)
-                        .apply()
-                    setNightMode(false)
-                } else {
-                    item.isChecked = true
-                    sharedPref
-                        .edit()
-                        .putBoolean(MODE_NIGHT, true)
-                        .apply()
-                    setNightMode(true)
-                }
+                item.isChecked = !item.isChecked
+                sharedPref.edit().putBoolean(MODE_NIGHT, item.isChecked).apply()
+                setNightMode(item.isChecked)
             }
         }
         return super.onOptionsItemSelected(item)
