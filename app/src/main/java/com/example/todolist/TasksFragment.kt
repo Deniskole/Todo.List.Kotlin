@@ -14,49 +14,59 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
-import com.example.todolist.data.TaskViewModel
+import com.example.todolist.data.AppDatabase
+import com.example.todolist.data.TaskRepository
 import com.example.todolist.model.Task
 import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongClickListener,
     View.OnClickListener {
     private val adapter = TasksAdapter(this)
-    private lateinit var taskViewModel: TaskViewModel
+
+    private lateinit var db: AppDatabase
+    private lateinit var repository: TaskRepository
+    private var parentJob = Job()
+    private val coroutineContext: CoroutineContext
+        get() = parentJob + Dispatchers.Main
+    private val scope = CoroutineScope(coroutineContext)
     private lateinit var tasksList: List<Task>
     private var animation: Animation? = null
     private val MODE_NIGHT = "MODE_NIGHT"
     private var modeNight = false
     private lateinit var sharedPref: SharedPreferences
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedPref = PreferenceManager
-            .getDefaultSharedPreferences(context)
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
         modeNight = sharedPref.getBoolean(MODE_NIGHT, false)
 
-        if (modeNight) {
-            setNightMode(true)
-        } else {
-            setNightMode(false)
-        }
+        setNightMode(modeNight)
 
         animation = AnimationUtils.loadAnimation(context, R.anim.myrotate)
-        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
-        taskViewModel.allTasks.observe(this, Observer { tasks ->
+
+        db = AppDatabase.getDatabase(requireContext())
+        repository = TaskRepository(db.taskDao())
+        repository.allTasks.observe(this, Observer { tasks ->
             tasks?.let { it ->
                 tasksList = it
                 tasksList.let { adapter.setTasks(it) }
             }
         })
+
         setHasOptionsMenu(true)
     }
 
@@ -83,10 +93,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-
         val themeMode = sharedPref.getBoolean(MODE_NIGHT, false)
         menu.getItem(2).isChecked = themeMode
     }
@@ -200,27 +208,32 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     }
 
     private fun setNightMode(flag: Boolean) {
-        if (flag) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
+        if (flag) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     private fun addTask(task: Task) {
-        taskViewModel.insert(task)
+        insert(task)
     }
 
     private fun deleteTask(task: Task) {
-        taskViewModel.delete(task)
+        delete(task)
     }
 
     private fun editTask(task: Task) {
-        taskViewModel.insert(task)
+        insert(task)
     }
 
     private fun doneTask(task: Task) {
         task.favorite = task.favorite != true
-        taskViewModel.insert(task)
+        insert(task)
+    }
+
+    private fun insert(task: Task) = scope.launch(Dispatchers.IO) {
+        repository.insert(task)
+    }
+
+    private fun delete(task: Task) = scope.launch(Dispatchers.IO) {
+        repository.delete(task)
     }
 }
