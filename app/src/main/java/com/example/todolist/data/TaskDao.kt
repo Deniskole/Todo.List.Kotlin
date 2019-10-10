@@ -14,4 +14,7 @@ interface TaskDao {
 
     @Delete
     fun deleteTask(task: Task)
+
+    @Query("SELECT * from task_table WHERE favorite = 1")
+    fun getDoneTasks(): List<Task>
 }
