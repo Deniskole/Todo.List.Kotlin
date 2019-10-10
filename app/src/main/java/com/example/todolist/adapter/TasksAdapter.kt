@@ -72,15 +72,11 @@ class TasksAdapter<L>(
 }
 
 private fun View.setTaskColor(view: View, color: Int) {
-    view.taskFavoriteImageView.setColorFilter(
-        ContextCompat.getColor(context, color)
-    )
+    view.taskFavoriteImageView.setColorFilter(ContextCompat.getColor(context, color))
 }
 
 private fun View.setBackgroundColor(view: View, color: Int) {
-    view.container.setBackgroundColor(
-        ContextCompat.getColor(context, color)
-    )
+    view.container.setBackgroundColor(ContextCompat.getColor(context, color))
 }
 
 

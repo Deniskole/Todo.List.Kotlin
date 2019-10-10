@@ -1,4 +1,4 @@
-package com.example.todolist
+package com.example.todolist.fragments
 
 
 import android.app.AlertDialog
@@ -17,6 +17,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist.R
+import com.example.todolist.TaskAction
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
