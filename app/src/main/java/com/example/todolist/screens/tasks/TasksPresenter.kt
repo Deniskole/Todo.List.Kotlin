@@ -1,6 +1,8 @@
 package com.example.todolist.screens.tasks
 
 import com.example.todolist.model.Task
+import com.example.todolist.screens.tasks.TasksContract.TasksStorage.Filter.ALL
+import com.example.todolist.screens.tasks.TasksContract.TasksStorage.Filter.FINISHED
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -9,20 +11,16 @@ class TasksPresenter(
     private val view: TasksContract.TasksView,
     private val storage: TasksContract.TasksStorage
 ) : CoroutineScope {
-    private var list = mutableListOf<Task>()
-
     override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
 
-    private fun start(filter: TasksContract.TasksStorage.Filter): List<Task> {
+    private fun start(filter: TasksContract.TasksStorage.Filter) {
         launch(Dispatchers.Main) {
-            list = withContext(Dispatchers.IO) { storage.getTasks(filter).toMutableList() }
-            view.showData(list)
+            view.showData(withContext(Dispatchers.IO) { storage.getTasks(filter).toMutableList() })
         }
-        return list
     }
 
-    fun all() = view.showData(start(TasksContract.TasksStorage.Filter.ALL))
-    fun done() = view.showData(start(TasksContract.TasksStorage.Filter.FINISHED))
+    fun all() = start(ALL)
+    fun done() = start(FINISHED)
     fun insert(task: Task) = launch { storage.insertTask(task) }
     fun delete(task: Task) = launch { storage.deleteTask(task) }
 }

@@ -20,13 +20,10 @@ class TasksAdapter<L>(
     private var tasks = emptyList<Task>()
     private val weakListener = WeakReference(listener)
     override fun getItemCount() = tasks.size
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == TITLE_AND_DESCRIPTION.ordinal) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+        if (viewType == TITLE_AND_DESCRIPTION.ordinal)
             TwoLineViewHolder(parent, weakListener)
-        } else {
-            SingleLineViewHolder(parent, weakListener)
-        }
-    }
+        else SingleLineViewHolder(parent, weakListener)
 
     fun getTask(position: Int): Task = tasks[position]
 
@@ -71,13 +68,13 @@ class TasksAdapter<L>(
         DESCRIPTION.ordinal
 }
 
-private fun View.setTaskColor(view: View, color: Int) {
+private fun View.setTaskColor(view: View, color: Int) =
     view.taskFavoriteImageView.setColorFilter(ContextCompat.getColor(context, color))
-}
 
-private fun View.setBackgroundColor(view: View, color: Int) {
+
+private fun View.setBackgroundColor(view: View, color: Int) =
     view.container.setBackgroundColor(ContextCompat.getColor(context, color))
-}
+
 
 
 

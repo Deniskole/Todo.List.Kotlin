@@ -64,20 +64,14 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         recyclerView.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
-
         floatingActionButton.setOnClickListener(this)
 
         showTasks()
     }
 
-    private fun showTasks() {
-        val viewMode = sharedPref.getBoolean(MODE_VIEW, true)
-        if (viewMode) {
-            presenter.all()
-        } else {
-            presenter.done()
-        }
-    }
+    private fun showTasks() = if (sharedPref.getBoolean(MODE_VIEW, true)) presenter.all()
+    else presenter.done()
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main, menu)
@@ -93,11 +87,11 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.allItem -> {
-                setShowViewMode(true)
+                setShowTasksMode(true)
                 presenter.all()
             }
             R.id.doneItem -> {
-                setShowViewMode(false)
+                setShowTasksMode(false)
                 presenter.done()
             }
             R.id.mySwitch -> {
@@ -124,11 +118,10 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                 val task = adapter.getTask(position)
                 task.favorite = !task.favorite
                 presenter.insert(task)
+                showTasks()
             }
             R.id.container -> actionTaskDialog(TaskAction.EDIT, position)
         }
-        showTasks()
-
     }
 
     override fun onViewHolderLongClick(
@@ -140,9 +133,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         return true
     }
 
-    override fun showData(tasksList: List<Task>) {
-        adapter.setTasks(tasksList)
-    }
+    override fun showData(tasksList: List<Task>) = adapter.setTasks(tasksList)
 
     private fun actionTaskDialog(action: TaskAction, position: Int? = null) {
         val task: Task? = position?.let { adapter.getTask(it) }
@@ -173,9 +164,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                             showTasks()
                         }
                     }
-                }.setNegativeButton(R.string.cancel) { dialog, _ ->
-                    dialog.cancel()
-                }
+                }.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
                 onShowListener = DialogInterface.OnShowListener { dialog ->
                     if (dialog !is AlertDialog) return@OnShowListener
                     val button = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
@@ -216,9 +205,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
-    private fun setShowViewMode(flag:Boolean){
+    private fun setShowTasksMode(flag: Boolean) =
         sharedPref.edit().putBoolean(MODE_VIEW, flag).apply()
-    }
 }
 
 
