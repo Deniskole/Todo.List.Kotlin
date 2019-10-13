@@ -1,4 +1,4 @@
-package com.example.todolist.fragments
+package com.example.todolist.screens.tasks
 
 
 import android.app.AlertDialog
@@ -21,37 +21,32 @@ import com.example.todolist.TaskAction
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
+import com.example.todolist.data.AppDatabase
+import com.example.todolist.fragments.facade.TasksStorageImpl
 import com.example.todolist.model.Task
 import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 
 class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongClickListener,
-    View.OnClickListener, Tasks {
+    View.OnClickListener, TasksContract.TasksView {
 
-    private lateinit var presenter: TasksFragmentPresenter
+    private lateinit var db: AppDatabase
+    private lateinit var presenter: TasksPresenter
+    private lateinit var sharedPref: SharedPreferences
     private val adapter = TasksAdapter(this)
     private var animation: Animation? = null
     private val MODE_NIGHT = "MODE_NIGHT"
-    private var modeNight = false
-    private lateinit var sharedPref: SharedPreferences
-
-    override fun showData(tasksList: List<Task>) {
-        adapter.setTasks(tasksList)
-    }
+    private val MODE_VIEW = "MODE_VIEW"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        presenter = TasksFragmentPresenter(this)
-        presenter.all()
-
+        db = AppDatabase.getDatabase(requireContext())
+        presenter = TasksPresenter(this, TasksStorageImpl(db))
         sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        modeNight = sharedPref.getBoolean(MODE_NIGHT, false)
-
-        setNightMode(modeNight)
-
         animation = AnimationUtils.loadAnimation(context, R.anim.myrotate)
 
+        setNightMode(sharedPref.getBoolean(MODE_NIGHT, false))
         setHasOptionsMenu(true)
     }
 
@@ -71,6 +66,17 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         recyclerView.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
 
         floatingActionButton.setOnClickListener(this)
+
+        showTasks()
+    }
+
+    private fun showTasks() {
+        val viewMode = sharedPref.getBoolean(MODE_VIEW, true)
+        if (viewMode) {
+            presenter.all()
+        } else {
+            presenter.done()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -86,8 +92,14 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.allItem -> presenter.all()
-            R.id.doneItem -> presenter.done()
+            R.id.allItem -> {
+                setShowViewMode(true)
+                presenter.all()
+            }
+            R.id.doneItem -> {
+                setShowViewMode(false)
+                presenter.done()
+            }
             R.id.mySwitch -> {
                 item.isChecked = !item.isChecked
                 sharedPref.edit().putBoolean(MODE_NIGHT, item.isChecked).apply()
@@ -115,6 +127,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             }
             R.id.container -> actionTaskDialog(TaskAction.EDIT, position)
         }
+        showTasks()
+
     }
 
     override fun onViewHolderLongClick(
@@ -124,6 +138,10 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     ): Boolean {
         actionTaskDialog(TaskAction.DELETE, position)
         return true
+    }
+
+    override fun showData(tasksList: List<Task>) {
+        adapter.setTasks(tasksList)
     }
 
     private fun actionTaskDialog(action: TaskAction, position: Int? = null) {
@@ -143,6 +161,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                                     view.descriptionEditText.text.toString()
                                 )
                             )
+                            showTasks()
                         }
                     } else {
                         view.titleEditText.setText(task.title)
@@ -151,6 +170,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                             val title = view.titleEditText.text.toString()
                             val description = view.descriptionEditText.text.toString()
                             presenter.insert(task.copy(title = title, descriptions = description))
+                            showTasks()
                         }
                     }
                 }.setNegativeButton(R.string.cancel) { dialog, _ ->
@@ -181,6 +201,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                 builder.setNegativeButton(R.string.cancel) { _, _ -> }
                     .setPositiveButton(R.string.delete) { _, _ ->
                         if (position != null) presenter.delete(adapter.getTask(position))
+                        showTasks()
                     }
             }
         }
@@ -193,6 +214,10 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     private fun setNightMode(flag: Boolean) {
         if (flag) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    }
+
+    private fun setShowViewMode(flag:Boolean){
+        sharedPref.edit().putBoolean(MODE_VIEW, flag).apply()
     }
 }
 
