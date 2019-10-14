@@ -5,7 +5,7 @@
         android:title="@string/all_tasks" />
     <item
         android:id="@+id/doneItem"
-        android:title="@string/done_tasks" />
+        android:title="@string/finished_tasks" />
 
     <item
         android:id="@+id/mySwitch"

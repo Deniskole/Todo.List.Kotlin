@@ -17,8 +17,10 @@
         android:id="@+id/descriptionEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="top"
         android:hint="@string/message_enter_description"
         android:importantForAutofill="no"
-        android:inputType="textPersonName"
+        android:inputType="textMultiLine"
+        android:minHeight="@dimen/min_height"
         android:padding="@dimen/spacing_x2" />
 </LinearLayout>
