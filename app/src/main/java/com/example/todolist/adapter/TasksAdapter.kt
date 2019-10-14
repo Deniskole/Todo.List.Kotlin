@@ -1,6 +1,6 @@
 package com.example.todolist.adapter
 
-import android.view.View
+import android.content.Context
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -17,20 +17,15 @@ class TasksAdapter<L>(
     listener: L
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() where L : OnViewHolderClickListener,
                                                           L : OnViewHolderLongClickListener {
+
     private var tasks = emptyList<Task>()
     private val weakListener = WeakReference(listener)
-    override fun getItemCount() = tasks.size
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         if (viewType == TITLE_AND_DESCRIPTION.ordinal)
             TwoLineViewHolder(parent, weakListener)
         else SingleLineViewHolder(parent, weakListener)
-
-    fun getTask(position: Int): Task = tasks[position]
-
-    internal fun setTasks(tasks: List<Task>) {
-        this.tasks = tasks
-        notifyDataSetChanged()
-    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val task: Task = tasks[position]
@@ -40,40 +35,46 @@ class TasksAdapter<L>(
                 TITLE_AND_DESCRIPTION.ordinal -> {
                     taskTitleTextView.text = task.title
                     taskDescriptionTextView.text = task.descriptions
-                    if (task.favorite) {
-                        setBackgroundColor(holder.itemView, R.color.teal)
-                        setTaskColor(holder.itemView, R.color.colorPrimaryDark)
-                    } else {
-                        setBackgroundColor(holder.itemView, R.color.transparent)
-                        setTaskColor(holder.itemView, R.color.gray)
-                    }
+                    setItemColor(context, holder, task.favorite)
                 }
                 DESCRIPTION.ordinal -> {
                     taskDescriptionTextView.text = tasks[position].descriptions
-                    if (task.favorite) {
-                        setBackgroundColor(holder.itemView, R.color.teal)
-                        setTaskColor(holder.itemView, R.color.colorPrimaryDark)
-                    } else {
-                        setBackgroundColor(holder.itemView, R.color.transparent)
-                        setTaskColor(holder.itemView, R.color.gray)
-                    }
+                    setItemColor(context, holder, task.favorite)
                 }
             }
         }
     }
 
+    override fun getItemCount() = tasks.size
+
     override fun getItemViewType(position: Int) = if (!tasks[position].title.isNullOrBlank())
-        TITLE_AND_DESCRIPTION.ordinal
-    else
-        DESCRIPTION.ordinal
+        TITLE_AND_DESCRIPTION.ordinal else DESCRIPTION.ordinal
+
+    fun getTask(position: Int): Task = tasks[position]
+
+    fun setTasks(tasks: List<Task>) {
+        this.tasks = tasks
+        notifyDataSetChanged()
+    }
+
+    private fun setItemColor(context: Context, holder: RecyclerView.ViewHolder, flag: Boolean) =
+        if (flag) {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.teal))
+            holder.itemView.taskFavoriteImageView.setColorFilter(
+                ContextCompat.getColor(context, R.color.colorPrimaryDark)
+            )
+        } else {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.transparent))
+            holder.itemView.taskFavoriteImageView.setColorFilter(
+                ContextCompat.getColor(context, R.color.gray)
+            )
+        }
+
 }
 
-private fun View.setTaskColor(view: View, color: Int) =
-    view.taskFavoriteImageView.setColorFilter(ContextCompat.getColor(context, color))
 
 
-private fun View.setBackgroundColor(view: View, color: Int) =
-    view.container.setBackgroundColor(ContextCompat.getColor(context, color))
+
 
 
 

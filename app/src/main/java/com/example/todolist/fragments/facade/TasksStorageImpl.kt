@@ -31,7 +31,6 @@ class TasksStorageImpl(
     override suspend fun insertTask(task: Task) = db.taskDao().insertTask(task)
     override suspend fun deleteTask(task: Task) = db.taskDao().deleteTask(task)
 
-
     override fun setFilterMode(filter: TasksContract.TasksStorage.Filter) =
         sharedPref.edit().putBoolean(MODE_VIEW, filter == ALL).apply()
 

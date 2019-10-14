@@ -7,14 +7,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
-import com.example.todolist.TaskAction
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
@@ -30,15 +27,12 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     private lateinit var db: AppDatabase
     private lateinit var presenter: TasksPresenter
     private val adapter = TasksAdapter(this)
-    private var animation: Animation? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         db = AppDatabase.getDatabase(requireContext())
         presenter = TasksPresenter(this, TasksStorageImpl(db, context))
-        animation = AnimationUtils.loadAnimation(context, R.anim.myrotate)
         setHasOptionsMenu(true)
     }
 
@@ -88,7 +82,6 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         when (v.id) {
             R.id.floatingActionButton -> {
                 actionTaskDialog(TaskAction.NEW)
-                floatingActionButton.startAnimation(animation)
             }
         }
     }

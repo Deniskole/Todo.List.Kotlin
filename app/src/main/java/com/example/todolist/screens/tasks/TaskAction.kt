@@ -1,4 +1,6 @@
-package com.example.todolist
+package com.example.todolist.screens.tasks
+
+import com.example.todolist.R
 
 enum class TaskAction(val titleResId: Int) {
     NEW(R.string.new_task),
