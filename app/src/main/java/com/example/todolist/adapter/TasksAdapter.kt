@@ -48,8 +48,11 @@ class TasksAdapter<L>(
 
     override fun getItemCount() = tasks.size
 
-    override fun getItemViewType(position: Int) = if (!tasks[position].title.isNullOrBlank())
-        TITLE_AND_DESCRIPTION.ordinal else DESCRIPTION.ordinal
+    override fun getItemViewType(position: Int) = if (!tasks[position].title.isNullOrBlank()) {
+        TITLE_AND_DESCRIPTION.ordinal
+    } else {
+        DESCRIPTION.ordinal
+    }
 
     fun getTask(position: Int): Task = tasks[position]
 
@@ -65,7 +68,12 @@ class TasksAdapter<L>(
                 ContextCompat.getColor(context, R.color.colorPrimaryDark)
             )
         } else {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.transparent))
+            holder.itemView.setBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.transparent
+                )
+            )
             holder.itemView.taskFavoriteImageView.setColorFilter(
                 ContextCompat.getColor(context, R.color.gray)
             )

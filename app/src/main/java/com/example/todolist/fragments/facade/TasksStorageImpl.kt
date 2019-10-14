@@ -3,13 +3,11 @@ package com.example.todolist.fragments.facade
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import androidx.appcompat.app.AppCompatDelegate
 import com.example.todolist.data.AppDatabase
 import com.example.todolist.model.Task
 import com.example.todolist.screens.tasks.TasksContract
 import com.example.todolist.screens.tasks.TasksContract.TasksStorage.Filter.ALL
 import com.example.todolist.screens.tasks.TasksContract.TasksStorage.Filter.FINISHED
-import com.example.todolist.util.Constants.Companion.MODE_NIGHT
 import com.example.todolist.util.Constants.Companion.MODE_VIEW
 
 class TasksStorageImpl(
@@ -29,7 +27,8 @@ class TasksStorageImpl(
 
     override suspend fun insertTask(task: Task) = db.taskDao().insertTask(task)
 
-    override suspend fun updateTask(task: Task) = db.taskDao().updateTask(task)
+    override suspend fun updateTask(task: Task) =
+        db.taskDao().updateTask(task.id, task.title, task.descriptions, task.favorite)
 
     override suspend fun deleteTask(task: Task) = db.taskDao().deleteTask(task)
 
@@ -37,10 +36,11 @@ class TasksStorageImpl(
         sharedPref.edit().putBoolean(MODE_VIEW, filter == ALL).apply()
 
     override fun getFilterMode(): TasksContract.TasksStorage.Filter =
-        if (sharedPref.getBoolean(MODE_VIEW, true))
+        if (sharedPref.getBoolean(MODE_VIEW, true)) {
             ALL
-        else FINISHED
-
+        } else {
+            FINISHED
+        }
 }
 
 

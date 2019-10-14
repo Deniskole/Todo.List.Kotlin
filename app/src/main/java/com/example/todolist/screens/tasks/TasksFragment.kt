@@ -55,7 +55,6 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         presenter.start()
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -82,7 +81,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             R.id.taskFavoriteImageView -> {
                 val task = adapter.getTask(position)
                 task.favorite = !task.favorite
-                presenter.update(task.title, task.descriptions, task.favorite)
+                presenter.update(task.id, task.title, task.descriptions, task.favorite)
             }
             R.id.container -> actionTaskDialog(TaskAction.EDIT, position)
         }
@@ -122,7 +121,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                         setPositiveButton(R.string.save) { _, _ ->
                             val title = view.titleEditText.text.toString()
                             val description = view.descriptionEditText.text.toString()
-                            presenter.update(title, description, task.favorite)
+                            presenter.update(task.id, title, description, task.favorite)
                         }
                     }
                 }.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
@@ -132,6 +131,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                     button.isEnabled = view.descriptionEditText.text.toString().isNotEmpty()
                     view.descriptionEditText.addTextChangedListener(object : TextWatcher {
                         override fun afterTextChanged(s: Editable) = Unit
+
                         override fun beforeTextChanged(
                             s: CharSequence, start: Int, count: Int, after: Int
                         ) = Unit
@@ -150,7 +150,9 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             TaskAction.DELETE -> {
                 builder.setNegativeButton(R.string.cancel) { _, _ -> }
                     .setPositiveButton(R.string.delete) { _, _ ->
-                        if (position != null) presenter.delete(adapter.getTask(position))
+                        if (position != null) {
+                            presenter.delete(adapter.getTask(position))
+                        }
                     }
             }
         }

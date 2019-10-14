@@ -9,13 +9,11 @@ interface TasksContract {
 
     interface Presenter {
         fun start()
-
         fun allButtonDidPress()
         fun finishedButtonDidPress()
         fun insert(title: String?, description: String)
-        fun update(title: String?, description: String, favorite: Boolean)
+        fun update(id: Int?, title: String?, description: String, favorite: Boolean)
         fun delete(task: Task)
-
         fun filterMode(filter: Boolean)
     }
 

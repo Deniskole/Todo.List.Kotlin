@@ -10,7 +10,6 @@ class TasksPresenter(
     private val storage: TasksContract.TasksStorage
 ) : CoroutineScope, TasksContract.Presenter {
 
-
     override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
 
     override fun start() {
@@ -22,10 +21,11 @@ class TasksPresenter(
     }
 
     override fun filterMode(filter: Boolean) =
-        if (filter)
+        if (filter) {
             storage.setFilterMode(TasksContract.TasksStorage.Filter.ALL)
-        else
+        } else {
             storage.setFilterMode(TasksContract.TasksStorage.Filter.FINISHED)
+        }
 
     override fun allButtonDidPress() {
         filterMode(true)
@@ -44,9 +44,13 @@ class TasksPresenter(
         }
     }
 
-    override fun update(title: String?, description: String, favorite: Boolean) {
+    override fun update(id: Int?, title: String?, description: String, favorite: Boolean) {
         launch {
-            storage.updateTask(Task(title, description, favorite))
+            if (id == null) {
+                storage.updateTask(Task(title, description, favorite))
+            } else {
+                storage.updateTask(Task(id, title, description, favorite))
+            }
             start()
         }
     }

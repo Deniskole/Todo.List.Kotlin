@@ -22,16 +22,19 @@ abstract class ViewHolder<L>(
 
     protected fun createClickListener() = View.OnClickListener { v ->
         listener.get()?.let {
-            if (it is OnViewHolderClickListener)
+            if (it is OnViewHolderClickListener) {
                 it.onViewHolderClick(this, adapterPosition, v.id)
+            }
         }
     }
 
     protected fun createLongClickListener() = View.OnLongClickListener { v ->
         listener.get()?.let {
-            if (it is OnViewHolderLongClickListener)
+            if (it is OnViewHolderLongClickListener) {
                 it.onViewHolderLongClick(this, adapterPosition, v.id)
-            else false
+            } else {
+                false
+            }
         } ?: false
     }
 }
