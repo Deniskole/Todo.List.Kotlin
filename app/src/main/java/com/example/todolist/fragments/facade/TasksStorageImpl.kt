@@ -20,7 +20,6 @@ class TasksStorageImpl(
     var sharedPref: SharedPreferences =
         PreferenceManager.getDefaultSharedPreferences(context)
 
-
     override suspend fun getTasks(filter: TasksContract.TasksStorage.Filter): List<Task> {
         return when (filter) {
             ALL -> db.taskDao().getAllTasks()
@@ -29,6 +28,9 @@ class TasksStorageImpl(
     }
 
     override suspend fun insertTask(task: Task) = db.taskDao().insertTask(task)
+
+    override suspend fun updateTask(task: Task) = db.taskDao().updateTask(task)
+
     override suspend fun deleteTask(task: Task) = db.taskDao().deleteTask(task)
 
     override fun setFilterMode(filter: TasksContract.TasksStorage.Filter) =
@@ -38,15 +40,6 @@ class TasksStorageImpl(
         if (sharedPref.getBoolean(MODE_VIEW, true))
             ALL
         else FINISHED
-
-
-    override fun setNightMode(mode: Boolean) {
-        sharedPref.edit().putBoolean(MODE_NIGHT, mode).apply()
-        if (mode) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-    }
-
-    override fun getNightMode(): Boolean = sharedPref.getBoolean(MODE_NIGHT, true)
 
 }
 

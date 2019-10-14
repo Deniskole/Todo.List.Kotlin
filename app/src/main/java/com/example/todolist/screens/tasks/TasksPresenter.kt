@@ -9,10 +9,11 @@ class TasksPresenter(
     private val view: TasksContract.View,
     private val storage: TasksContract.TasksStorage
 ) : CoroutineScope, TasksContract.Presenter {
+
+
     override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
 
     override fun start() {
-        storage.setNightMode(storage.getNightMode())
         launch(Dispatchers.Main) {
             view.showData(withContext(Dispatchers.IO) {
                 storage.getTasks(storage.getFilterMode()).toMutableList()
@@ -26,9 +27,6 @@ class TasksPresenter(
         else
             storage.setFilterMode(TasksContract.TasksStorage.Filter.FINISHED)
 
-    override fun setNightMode(mode: Boolean) = storage.setNightMode(mode)
-    override fun getNightMode(): Boolean = storage.getNightMode()
-
     override fun allButtonDidPress() {
         filterMode(true)
         start()
@@ -39,9 +37,16 @@ class TasksPresenter(
         start()
     }
 
-    override fun insert(task: Task) {
+    override fun insert(title: String?, description: String) {
         launch {
-            storage.insertTask(task)
+            storage.insertTask(Task(title, description))
+            start()
+        }
+    }
+
+    override fun update(title: String?, description: String, favorite: Boolean) {
+        launch {
+            storage.updateTask(Task(title, description, favorite))
             start()
         }
     }

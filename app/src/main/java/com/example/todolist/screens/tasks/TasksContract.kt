@@ -12,23 +12,21 @@ interface TasksContract {
 
         fun allButtonDidPress()
         fun finishedButtonDidPress()
-        fun insert(task: Task)
+        fun insert(title: String?, description: String)
+        fun update(title: String?, description: String, favorite: Boolean)
         fun delete(task: Task)
 
         fun filterMode(filter: Boolean)
-        fun setNightMode(mode: Boolean)
-        fun getNightMode(): Boolean
     }
 
     interface TasksStorage {
         suspend fun getTasks(filter: Filter): List<Task>
         suspend fun insertTask(task: Task)
+        suspend fun updateTask(task: Task)
         suspend fun deleteTask(task: Task)
 
         fun setFilterMode(filter: Filter)
         fun getFilterMode(): Filter
-        fun setNightMode(mode: Boolean)
-        fun getNightMode(): Boolean
 
         enum class Filter { ALL, FINISHED }
     }

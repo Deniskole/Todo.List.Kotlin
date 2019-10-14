@@ -61,19 +61,10 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        menu.getItem(2).isChecked = presenter.getNightMode()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.allItem -> presenter.allButtonDidPress()
             R.id.doneItem -> presenter.finishedButtonDidPress()
-            R.id.mySwitch -> {
-                item.isChecked = !item.isChecked
-                presenter.setNightMode(item.isChecked)
-            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -91,7 +82,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             R.id.taskFavoriteImageView -> {
                 val task = adapter.getTask(position)
                 task.favorite = !task.favorite
-                presenter.insert(task)
+                presenter.update(task.title, task.descriptions, task.favorite)
             }
             R.id.container -> actionTaskDialog(TaskAction.EDIT, position)
         }
@@ -120,10 +111,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                     if (task == null) {
                         setPositiveButton(R.string.add) { _, _ ->
                             presenter.insert(
-                                Task(
-                                    view.titleEditText.text.toString(),
-                                    view.descriptionEditText.text.toString()
-                                )
+                                view.titleEditText.text.toString(),
+                                view.descriptionEditText.text.toString()
                             )
                             presenter.start()
                         }
@@ -133,7 +122,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                         setPositiveButton(R.string.save) { _, _ ->
                             val title = view.titleEditText.text.toString()
                             val description = view.descriptionEditText.text.toString()
-                            presenter.insert(task.copy(title = title, descriptions = description))
+                            presenter.update(title, description, task.favorite)
                         }
                     }
                 }.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }

@@ -6,9 +6,4 @@
     <item
         android:id="@+id/doneItem"
         android:title="@string/finished_tasks" />
-
-    <item
-        android:id="@+id/mySwitch"
-        android:checkable="true"
-        android:title="@string/night_mode" />
 </menu>
