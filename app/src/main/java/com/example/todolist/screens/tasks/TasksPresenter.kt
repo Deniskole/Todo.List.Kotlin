@@ -1,19 +1,19 @@
 package com.example.todolist.screens.tasks
 
 import com.example.todolist.model.Task
+import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.ALL
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-import com.example.todolist.screens.tasks.TasksContract.TasksStorage.Filter.*
 
 
 class TasksPresenter(
     private val view: TasksContract.View,
-    private val storage: TasksContract.TasksStorage
+    private val storage: TasksContract.Storage
 ) : CoroutineScope, TasksContract.Presenter {
 
     override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
 
-    override fun show(filter: TasksContract.TasksStorage.Filter) {
+    override fun show(filter: TasksContract.Storage.Filter) {
         launch(Dispatchers.Main) {
             view.showData(withContext(Dispatchers.IO) {
                 storage.getTasks(filter).toMutableList()
@@ -21,7 +21,7 @@ class TasksPresenter(
         }
     }
 
-    override fun buttonDidPress(filter: TasksContract.TasksStorage.Filter) {
+    override fun buttonDidPress(filter: TasksContract.Storage.Filter) {
         show(filter)
     }
 
@@ -32,16 +32,16 @@ class TasksPresenter(
         }
     }
 
-    override fun update(id: Int?, title: String?, description: String, favorite: Boolean) {
+    override fun update(id: Int, title: String?, description: String, favorite: Boolean) {
         launch {
-            if (id == null) {
-                /* TODO: WHY UPDATE???? */
-                storage.updateTask(Task(title, description, favorite))
-            } else {
-                storage.updateTask(Task(id, title, description, favorite))
-            }
+            storage.updateTask(Task(id, title, description, favorite))
             show(ALL)
         }
+    }
+
+    override fun favorite(id: Int, title: String?, description: String, favorite: Boolean) {
+        val favoriteTask = !favorite
+        update(id, title, description, favoriteTask)
     }
 
     override fun delete(task: Task) {

@@ -17,13 +17,13 @@ import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
 import com.example.todolist.common.di.TasksModule
 import com.example.todolist.model.Task
-import com.example.todolist.screens.tasks.TasksContract.TaskAction.*
+import com.example.todolist.screens.tasks.TasksContract.Action.*
 import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
-import com.example.todolist.screens.tasks.TasksContract.TasksStorage.Filter.*
+import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.*
 
 class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongClickListener,
     View.OnClickListener, TasksContract.View {
@@ -83,12 +83,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         when (id) {
             R.id.taskFavoriteImageView -> {
                 val task = adapter.getTask(position)
-                task.favorite = !task.favorite
-                /* TODO: Why it is here?!!!!
-                    val task = adapter.getTask(position)
-                    task.favorite = !task.favorite
-                */
-                presenter.update(task.id, task.title, task.descriptions, task.favorite)
+                presenter.favorite(task.id, task.title, task.descriptions, task.favorite)
             }
             R.id.container -> actionTaskDialog(EDIT, position)
         }
@@ -102,7 +97,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun showData(tasksList: List<Task>) = adapter.setTasks(tasksList)
 
-    private fun actionTaskDialog(action: TasksContract.TaskAction, position: Int? = null) {
+    private fun actionTaskDialog(action: TasksContract.Action, position: Int? = null) {
         val task: Task? = position?.let { adapter.getTask(it) }
         val builder = AlertDialog.Builder(context).setTitle(action.titleResId)
         var onShowListener: DialogInterface.OnShowListener? = null
@@ -123,9 +118,11 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                         view.titleEditText.setText(task.title)
                         view.descriptionEditText.setText(task.descriptions)
                         setPositiveButton(R.string.save) { _, _ ->
-                            val title = view.titleEditText.text.toString()
-                            val description = view.descriptionEditText.text.toString()
-                            presenter.update(task.id, title, description, task.favorite)
+                            presenter.update(
+                                task.id,
+                                view.titleEditText.text.toString(),
+                                view.descriptionEditText.text.toString(),
+                                task.favorite)
                         }
                     }
                 }.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }

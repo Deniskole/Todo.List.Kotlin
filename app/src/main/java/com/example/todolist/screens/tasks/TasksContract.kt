@@ -9,15 +9,15 @@ interface TasksContract {
     }
 
     interface Presenter {
-        fun show(filter: TasksStorage.Filter)
-        fun buttonDidPress(filter: TasksStorage.Filter)
+        fun show(filter: Storage.Filter)
+        fun buttonDidPress(filter: Storage.Filter)
         fun insert(title: String?, description: String)
-        fun update(id: Int?, title: String?, description: String, favorite: Boolean)
+        fun update(id: Int, title: String?, description: String, favorite: Boolean)
+        fun favorite(id: Int, title: String?, description: String, favorite: Boolean)
         fun delete(task: Task)
     }
 
-    /* TODO: Naming issue. */
-    interface TasksStorage {
+    interface Storage {
         suspend fun getTasks(filter: Filter): List<Task>
         suspend fun insertTask(task: Task)
         suspend fun updateTask(task: Task)
@@ -26,8 +26,7 @@ interface TasksContract {
         enum class Filter { ALL, FINISHED }
     }
 
-    /* TODO: Naming issue. */
-    enum class TaskAction(val titleResId: Int) {
+    enum class Action(val titleResId: Int) {
         NEW(R.string.new_task),
         EDIT(R.string.edit),
         DELETE(R.string.delete)
