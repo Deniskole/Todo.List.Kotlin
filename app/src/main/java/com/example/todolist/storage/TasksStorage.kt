@@ -1,4 +1,4 @@
-package com.example.todolist.fragments.facade
+package com.example.todolist.storage
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -9,8 +9,9 @@ import com.example.todolist.screens.tasks.TasksContract
 import com.example.todolist.screens.tasks.TasksContract.TasksStorage.Filter.ALL
 import com.example.todolist.screens.tasks.TasksContract.TasksStorage.Filter.FINISHED
 import com.example.todolist.util.Constants.Companion.MODE_VIEW
+import javax.inject.Inject
 
-class TasksStorageImpl(
+class TasksStorage @Inject constructor(
     private val db: AppDatabase,
     context: Context?
 ) : TasksContract.TasksStorage {

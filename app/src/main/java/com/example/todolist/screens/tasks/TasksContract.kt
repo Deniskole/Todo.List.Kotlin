@@ -1,5 +1,6 @@
 package com.example.todolist.screens.tasks
 
+import com.example.todolist.R
 import com.example.todolist.model.Task
 
 interface TasksContract {
@@ -27,5 +28,11 @@ interface TasksContract {
         fun getFilterMode(): Filter
 
         enum class Filter { ALL, FINISHED }
+    }
+
+    enum class TaskAction(val titleResId: Int) {
+        NEW(R.string.new_task),
+        EDIT(R.string.edit),
+        DELETE(R.string.delete)
     }
 }

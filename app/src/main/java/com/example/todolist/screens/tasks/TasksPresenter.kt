@@ -2,10 +2,11 @@ package com.example.todolist.screens.tasks
 
 import com.example.todolist.model.Task
 import kotlinx.coroutines.*
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 
-class TasksPresenter(
+class TasksPresenter @Inject constructor(
     private val view: TasksContract.View,
     private val storage: TasksContract.TasksStorage
 ) : CoroutineScope, TasksContract.Presenter {
