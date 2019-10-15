@@ -29,7 +29,7 @@ class TasksAdapter<L>(
         }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val task: Task = tasks[position]
+        val task: Task /*TODO: ": Task" */= /* TODO: "tasks[position]" */tasks[position]
 
         with(holder.itemView) {
             when (holder.itemViewType) {
@@ -39,7 +39,7 @@ class TasksAdapter<L>(
                     setItemColor(context, holder, task.favorite)
                 }
                 DESCRIPTION.ordinal -> {
-                    taskDescriptionTextView.text = tasks[position].descriptions
+                    taskDescriptionTextView.text = /*TODO: "tasks[position]" */tasks[position].descriptions
                     setItemColor(context, holder, task.favorite)
                 }
             }
@@ -48,7 +48,7 @@ class TasksAdapter<L>(
 
     override fun getItemCount() = tasks.size
 
-    override fun getItemViewType(position: Int) = if (!tasks[position].title.isNullOrBlank()) {
+    override fun getItemViewType(position: Int) = if (!/*TODO: "tasks[position]" */tasks[position].title.isNullOrBlank()) {
         TITLE_AND_DESCRIPTION.ordinal
     } else {
         DESCRIPTION.ordinal
@@ -61,7 +61,7 @@ class TasksAdapter<L>(
         notifyDataSetChanged()
     }
 
-    private fun setItemColor(context: Context, holder: RecyclerView.ViewHolder, flag: Boolean) =
+    private fun setItemColor(context: Context, holder: RecyclerView.ViewHolder, /* TODO: What does it means? */flag: Boolean) =
         if (flag) {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.teal))
             holder.itemView.taskFavoriteImageView.setColorFilter(

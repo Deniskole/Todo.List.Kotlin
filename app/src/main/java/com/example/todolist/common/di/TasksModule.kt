@@ -7,6 +7,7 @@ import com.example.todolist.screens.tasks.TasksPresenter
 import com.example.todolist.storage.TasksStorage
 import toothpick.config.Module
 
+/* TODO: Wrong usage of the DI. */
 class TasksModule(view: TasksContract.View, context: Context) : Module() {
     init {
         val dataBase: AppDatabase = AppDatabase.getDatabase(context)

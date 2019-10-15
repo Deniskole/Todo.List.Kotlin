@@ -12,6 +12,10 @@ class MainActivity : AppCompatActivity() {
 
         if (supportFragmentManager.findFragmentById(R.id.container) == null) {
             supportFragmentManager.beginTransaction()
+                /*TODO: ???
+                      .add(R.id.container,
+                    TasksFragment(), TasksFragment::class.java.name)
+                */
                 .add(R.id.container,
                     TasksFragment(), TasksFragment::class.java.name)
                 .commit()

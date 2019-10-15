@@ -56,6 +56,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         recyclerView.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
+        /* TODO: Missing empty line. */
         floatingActionButton.setOnClickListener(this)
 
         presenter.start()
@@ -77,6 +78,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     override fun onClick(v: View) {
         when (v.id) {
             R.id.floatingActionButton -> {
+                /* TODO: Can be written in one line. */
                 actionTaskDialog(NEW)
             }
         }
@@ -87,6 +89,10 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
             R.id.taskFavoriteImageView -> {
                 val task = adapter.getTask(position)
                 task.favorite = !task.favorite
+                /* TODO: Why it is here?!!!!
+                    val task = adapter.getTask(position)
+                    task.favorite = !task.favorite
+                */
                 presenter.update(task.id, task.title, task.descriptions, task.favorite)
             }
             R.id.container -> actionTaskDialog(EDIT, position)
@@ -157,7 +163,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                 builder.setNegativeButton(R.string.cancel) { _, _ -> }
                     .setPositiveButton(R.string.delete) { _, _ ->
                         if (position != null) {
-                            presenter.delete(adapter.getTask(position))
+                            presenter.delete(/* TODO: adapter.getTask(position)*/adapter.getTask(position))
                         }
                     }
             }

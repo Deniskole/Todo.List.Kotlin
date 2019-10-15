@@ -11,12 +11,13 @@ import com.example.todolist.screens.tasks.TasksContract.TasksStorage.Filter.FINI
 import com.example.todolist.util.Constants.Companion.MODE_VIEW
 import javax.inject.Inject
 
+/* TODO: Move to the tasks package. */
 class TasksStorage @Inject constructor(
     private val db: AppDatabase,
-    context: Context?
+    context: Context? /* TODO: Why it is optional? */
 ) : TasksContract.TasksStorage {
 
-    var sharedPref: SharedPreferences =
+    var sharedPref: SharedPreferences /* TODO: Type can be ommited. */ =
         PreferenceManager.getDefaultSharedPreferences(context)
 
     override suspend fun getTasks(filter: TasksContract.TasksStorage.Filter): List<Task> {
