@@ -29,7 +29,7 @@ class TasksAdapter<L>(
         }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val task: Task /*TODO: ": Task" */= /* TODO: "tasks[position]" */tasks[position]
+        val task = tasks[position]
 
         with(holder.itemView) {
             when (holder.itemViewType) {
@@ -39,7 +39,7 @@ class TasksAdapter<L>(
                     setItemColor(context, holder, task.favorite)
                 }
                 DESCRIPTION.ordinal -> {
-                    taskDescriptionTextView.text = /*TODO: "tasks[position]" */tasks[position].descriptions
+                    taskDescriptionTextView.text = task.descriptions
                     setItemColor(context, holder, task.favorite)
                 }
             }
@@ -48,11 +48,12 @@ class TasksAdapter<L>(
 
     override fun getItemCount() = tasks.size
 
-    override fun getItemViewType(position: Int) = if (!/*TODO: "tasks[position]" */tasks[position].title.isNullOrBlank()) {
-        TITLE_AND_DESCRIPTION.ordinal
-    } else {
-        DESCRIPTION.ordinal
-    }
+    override fun getItemViewType(position: Int) =
+        if (!getTask(position).title.isNullOrBlank()) {
+            TITLE_AND_DESCRIPTION.ordinal
+        } else {
+            DESCRIPTION.ordinal
+        }
 
     fun getTask(position: Int): Task = tasks[position]
 
@@ -61,19 +62,14 @@ class TasksAdapter<L>(
         notifyDataSetChanged()
     }
 
-    private fun setItemColor(context: Context, holder: RecyclerView.ViewHolder, /* TODO: What does it means? */flag: Boolean) =
-        if (flag) {
+    private fun setItemColor(context: Context, holder: RecyclerView.ViewHolder, favorite: Boolean) =
+        if (favorite) {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.teal))
             holder.itemView.taskFavoriteImageView.setColorFilter(
                 ContextCompat.getColor(context, R.color.colorPrimaryDark)
             )
         } else {
-            holder.itemView.setBackgroundColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.transparent
-                )
-            )
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.transparent))
             holder.itemView.taskFavoriteImageView.setColorFilter(
                 ContextCompat.getColor(context, R.color.gray)
             )

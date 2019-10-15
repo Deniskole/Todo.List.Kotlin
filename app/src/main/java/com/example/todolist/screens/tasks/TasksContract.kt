@@ -9,18 +9,11 @@ interface TasksContract {
     }
 
     interface Presenter {
-        fun start()
-
-        /* TODO: Can be merged. */
-        fun allButtonDidPress()
-        fun finishedButtonDidPress()
-
+        fun show(filter: TasksStorage.Filter)
+        fun buttonDidPress(filter: TasksStorage.Filter)
         fun insert(title: String?, description: String)
         fun update(id: Int?, title: String?, description: String, favorite: Boolean)
         fun delete(task: Task)
-
-        /* TODO: Why do we need this method????*/
-        fun filterMode(filter: Boolean)
     }
 
     /* TODO: Naming issue. */
@@ -29,10 +22,6 @@ interface TasksContract {
         suspend fun insertTask(task: Task)
         suspend fun updateTask(task: Task)
         suspend fun deleteTask(task: Task)
-
-        /* TODO: Why do we need this methods? */
-        fun setFilterMode(filter: Filter)
-        fun getFilterMode(): Filter
 
         enum class Filter { ALL, FINISHED }
     }

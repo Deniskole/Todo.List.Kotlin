@@ -23,14 +23,14 @@ import kotlinx.android.synthetic.main.fragment_tasks.*
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
+import com.example.todolist.screens.tasks.TasksContract.TasksStorage.Filter.*
 
 class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongClickListener,
     View.OnClickListener, TasksContract.View {
 
     private val adapter = TasksAdapter(this)
 
-    @Inject
-    lateinit var presenter: TasksPresenter
+    @Inject lateinit var presenter: TasksPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,10 +56,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         recyclerView.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
-        /* TODO: Missing empty line. */
         floatingActionButton.setOnClickListener(this)
-
-        presenter.start()
+        presenter.show(ALL)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -69,18 +67,15 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.allItem -> presenter.allButtonDidPress()
-            R.id.doneItem -> presenter.finishedButtonDidPress()
+            R.id.allItem -> presenter.buttonDidPress(ALL)
+            R.id.doneItem -> presenter.buttonDidPress(FINISHED)
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.floatingActionButton -> {
-                /* TODO: Can be written in one line. */
-                actionTaskDialog(NEW)
-            }
+            R.id.floatingActionButton -> { actionTaskDialog(NEW) }
         }
     }
 
@@ -100,10 +95,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     }
 
     override fun onViewHolderLongClick(
-        holder: RecyclerView.ViewHolder,
-        position: Int,
-        id: Int
-    ): Boolean {
+        holder: RecyclerView.ViewHolder, position: Int, id: Int): Boolean {
         actionTaskDialog(DELETE, position)
         return true
     }
@@ -125,7 +117,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                                 view.titleEditText.text.toString(),
                                 view.descriptionEditText.text.toString()
                             )
-                            presenter.start()
+                            presenter.show(ALL)
                         }
                     } else {
                         view.titleEditText.setText(task.title)
@@ -163,7 +155,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                 builder.setNegativeButton(R.string.cancel) { _, _ -> }
                     .setPositiveButton(R.string.delete) { _, _ ->
                         if (position != null) {
-                            presenter.delete(/* TODO: adapter.getTask(position)*/adapter.getTask(position))
+                            presenter.delete(adapter.getTask(position))
                         }
                     }
             }
