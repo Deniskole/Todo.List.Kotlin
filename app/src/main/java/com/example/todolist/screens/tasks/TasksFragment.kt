@@ -18,25 +18,27 @@ import com.example.todolist.adapter.TasksAdapter
 import com.example.todolist.common.di.TasksModule
 import com.example.todolist.model.Task
 import com.example.todolist.screens.tasks.TasksContract.Action.*
+import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.ALL
+import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.FINISHED
 import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
-import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.*
 
 class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongClickListener,
     View.OnClickListener, TasksContract.View {
 
     private val adapter = TasksAdapter(this)
 
-    @Inject lateinit var presenter: TasksPresenter
+    @Inject
+    lateinit var presenter: TasksPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val scope: Scope = Toothpick.openScope(this)
-        scope.installModules(TasksModule(this, requireContext()))
+        scope.installModules(TasksModule(this))
         Toothpick.inject(this, scope)
 
         setHasOptionsMenu(true)
@@ -75,7 +77,9 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.floatingActionButton -> { actionTaskDialog(NEW) }
+            R.id.floatingActionButton -> {
+                actionTaskDialog(NEW)
+            }
         }
     }
 
@@ -90,7 +94,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     }
 
     override fun onViewHolderLongClick(
-        holder: RecyclerView.ViewHolder, position: Int, id: Int): Boolean {
+        holder: RecyclerView.ViewHolder, position: Int, id: Int
+    ): Boolean {
         actionTaskDialog(DELETE, position)
         return true
     }
@@ -122,7 +127,8 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                                 task.id,
                                 view.titleEditText.text.toString(),
                                 view.descriptionEditText.text.toString(),
-                                task.favorite)
+                                task.favorite
+                            )
                         }
                     }
                 }.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }

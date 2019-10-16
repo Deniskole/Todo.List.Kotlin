@@ -4,7 +4,9 @@ import com.example.todolist.data.AppDatabase
 import com.example.todolist.model.Task
 import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.ALL
 import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.FINISHED
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class TasksStorage (private val db: AppDatabase) : TasksContract.Storage {
 
     override suspend fun getTasks(filter: TasksContract.Storage.Filter): List<Task> {
