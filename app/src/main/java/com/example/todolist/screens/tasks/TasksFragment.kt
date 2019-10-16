@@ -4,9 +4,8 @@ package com.example.todolist.screens.tasks
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.*
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -58,8 +57,10 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         recyclerView.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
+
         floatingActionButton.setOnClickListener(this)
-        presenter.show(ALL)
+
+        presenter.show(ALL) // TODO: Use appropriate method to start presenter.
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -77,9 +78,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.floatingActionButton -> {
-                actionTaskDialog(NEW)
-            }
+            R.id.floatingActionButton -> actionTaskDialog(NEW)
         }
     }
 
@@ -104,13 +103,16 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     private fun actionTaskDialog(action: TasksContract.Action, position: Int? = null) {
         val task: Task? = position?.let { adapter.getTask(it) }
-        val builder = AlertDialog.Builder(context).setTitle(action.titleResId)
         var onShowListener: DialogInterface.OnShowListener? = null
+
+        val builder = AlertDialog.Builder(context).setTitle(action.titleResId)
 
         when (action) {
             NEW, EDIT -> {
                 val view = View.inflate(context, R.layout.dialog_input, null)
-                builder.setView(view).apply {
+                builder.apply {
+                    setView(view)
+
                     if (task == null) {
                         setPositiveButton(R.string.add) { _, _ ->
                             presenter.insert(
@@ -122,6 +124,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                     } else {
                         view.titleEditText.setText(task.title)
                         view.descriptionEditText.setText(task.descriptions)
+
                         setPositiveButton(R.string.save) { _, _ ->
                             presenter.update(
                                 task.id,
@@ -132,10 +135,15 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                         }
                     }
                 }.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
+
                 onShowListener = DialogInterface.OnShowListener { dialog ->
                     if (dialog !is AlertDialog) return@OnShowListener
+
                     val button = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
                     button.isEnabled = view.descriptionEditText.text.toString().isNotEmpty()
+/*
+    TODO: This is an example of how such methods can be simplified (It is no an issue or warning).
+
                     view.descriptionEditText.addTextChangedListener(object : TextWatcher {
                         override fun afterTextChanged(s: Editable) = Unit
 
@@ -152,22 +160,24 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                             button.isEnabled = s.isNotEmpty()
                         }
                     })
+*/
+                    view.descriptionEditText.addTextChangedListener {
+                        button.isEnabled = !it.isNullOrEmpty()
+                    }
                 }
             }
             DELETE -> {
                 builder.setNegativeButton(R.string.cancel) { _, _ -> }
                     .setPositiveButton(R.string.delete) { _, _ ->
-                        if (position != null) {
-                            presenter.delete(adapter.getTask(position))
-                        }
+                        if (position != null) presenter.delete(adapter.getTask(position))
                     }
             }
         }
 
-        val dialog = builder.create()
-        onShowListener?.also { dialog.setOnShowListener(it) }
-        dialog.show()
+        with(builder.create()) {
+            onShowListener?.also { setOnShowListener(it) }
+
+            show()
+        }
     }
 }
-
-
