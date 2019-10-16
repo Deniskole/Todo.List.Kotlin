@@ -14,7 +14,7 @@ import com.example.todolist.R
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
-import com.example.todolist.common.di.TasksModule
+import com.example.todolist.common.di.scenes.TasksModule
 import com.example.todolist.model.Task
 import com.example.todolist.screens.tasks.TasksContract.Action.*
 import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.ALL
@@ -30,8 +30,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     private val adapter = TasksAdapter(this)
 
-    @Inject
-    lateinit var presenter: TasksPresenter
+    @Inject lateinit var presenter: TasksPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +59,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
         floatingActionButton.setOnClickListener(this)
 
-        presenter.show(ALL) // TODO: Use appropriate method to start presenter.
+        presenter.start()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -119,7 +118,6 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
                                 view.titleEditText.text.toString(),
                                 view.descriptionEditText.text.toString()
                             )
-                            presenter.show(ALL)
                         }
                     } else {
                         view.titleEditText.setText(task.title)
@@ -141,26 +139,6 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
                     val button = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
                     button.isEnabled = view.descriptionEditText.text.toString().isNotEmpty()
-/*
-    TODO: This is an example of how such methods can be simplified (It is no an issue or warning).
-
-                    view.descriptionEditText.addTextChangedListener(object : TextWatcher {
-                        override fun afterTextChanged(s: Editable) = Unit
-
-                        override fun beforeTextChanged(
-                            s: CharSequence, start: Int, count: Int, after: Int
-                        ) = Unit
-
-                        override fun onTextChanged(
-                            s: CharSequence,
-                            start: Int,
-                            before: Int,
-                            count: Int
-                        ) {
-                            button.isEnabled = s.isNotEmpty()
-                        }
-                    })
-*/
                     view.descriptionEditText.addTextChangedListener {
                         button.isEnabled = !it.isNullOrEmpty()
                     }

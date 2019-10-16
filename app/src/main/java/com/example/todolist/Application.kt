@@ -1,6 +1,7 @@
 package com.example.todolist
 
 import android.app.Application
+import com.example.todolist.common.di.ApplicationModule
 import toothpick.Toothpick
 
 class Application : Application() {
@@ -8,13 +9,13 @@ class Application : Application() {
         super.onCreate()
 
         val scope = Toothpick.openScope(this)
-        scope.installModules(
-            //Implement
-            /*
-            * TODO: Create AppModule
-            *  - add AppDatabase dependency to the ap module.
-            *  - create Provider for the AppDatabase creation.
-            * */
-        )
+        scope.installModules(ApplicationModule(this))
+
+        /*
+           * TODO: Create AppModule
+           *  - add AppDatabase dependency to the ap module.
+           *  - create Provider for the AppDatabase creation.
+           * */
+
     }
 }
