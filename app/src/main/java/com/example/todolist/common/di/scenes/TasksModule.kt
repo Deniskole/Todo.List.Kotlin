@@ -13,3 +13,4 @@ class TasksModule(fragment: TasksFragment) : Module() {
         bind(TasksContract.Presenter::class.java).to(TasksPresenter::class.java).singleton()
     }
 }
+

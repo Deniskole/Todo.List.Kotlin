@@ -10,12 +10,5 @@ class Application : Application() {
 
         val scope = Toothpick.openScope(this)
         scope.installModules(ApplicationModule(this))
-
-        /*
-           * TODO: Create AppModule
-           *  - add AppDatabase dependency to the ap module.
-           *  - create Provider for the AppDatabase creation.
-           * */
-
     }
 }

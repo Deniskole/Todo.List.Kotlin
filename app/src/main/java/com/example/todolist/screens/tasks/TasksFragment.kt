@@ -35,7 +35,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val scope: Scope = Toothpick.openScope(this)
+        val scope: Scope = Toothpick.openScopes(requireContext().applicationContext , this)
         scope.installModules(TasksModule(this))
         Toothpick.inject(this, scope)
 
