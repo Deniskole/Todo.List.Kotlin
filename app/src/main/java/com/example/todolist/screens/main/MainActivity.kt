@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.todolist.R
 import com.example.todolist.screens.container.ContainerFragment
-import com.example.todolist.screens.tasks.TasksFragment
 import toothpick.Toothpick
 
 class MainActivity : AppCompatActivity() {

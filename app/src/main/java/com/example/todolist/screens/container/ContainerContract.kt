@@ -13,7 +13,7 @@ interface ContainerContract {
         }
     }
 
-    interface Presenter {
-        fun select(@NavigationItem what: Int)
+    interface View {
+        fun showScreen(@NavigationItem id: Int)
     }
 }

@@ -17,25 +17,27 @@ import com.example.todolist.adapter.TasksAdapter
 import com.example.todolist.common.di.scenes.TasksModule
 import com.example.todolist.model.Task
 import com.example.todolist.screens.tasks.TasksContract.Action.*
-import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.ALL
-import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.FINISHED
 import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 import toothpick.Scope
 import toothpick.Toothpick
 import javax.inject.Inject
 
-class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongClickListener,
-    View.OnClickListener, TasksContract.View {
-
+class TasksFragment(private val filter: TasksContract.Storage.Filter) : Fragment(),
+    OnViewHolderClickListener, OnViewHolderLongClickListener, TasksContract.View {
     private val adapter = TasksAdapter(this)
+    @Inject
+    lateinit var presenter: TasksPresenter
 
-    @Inject lateinit var presenter: TasksPresenter
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        presenter.start(filter)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val scope: Scope = Toothpick.openScopes(requireContext().applicationContext , this)
+        val scope: Scope = Toothpick.openScopes(requireContext().applicationContext, this)
         scope.installModules(TasksModule(this))
         Toothpick.inject(this, scope)
 
@@ -57,9 +59,7 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
         recyclerView.layoutManager = layoutManager
         recyclerView.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
 
-        floatingActionButton.setOnClickListener(this)
-
-        presenter.start()
+        presenter.start(filter)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -69,16 +69,9 @@ class TasksFragment : Fragment(), OnViewHolderClickListener, OnViewHolderLongCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.allItem -> presenter.buttonDidPress(ALL)
-            R.id.doneItem -> presenter.buttonDidPress(FINISHED)
+            R.id.addItem -> actionTaskDialog(NEW)
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.floatingActionButton -> actionTaskDialog(NEW)
-        }
     }
 
     override fun onViewHolderClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {

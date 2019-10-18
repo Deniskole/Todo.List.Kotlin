@@ -9,7 +9,7 @@ interface TasksContract {
     }
 
     interface Presenter {
-        fun start()
+        fun start(filter: Storage.Filter)
         fun buttonDidPress(filter: Storage.Filter)
         fun insert(title: String?, description: String)
         fun update(id: Int, title: String?, description: String, favorite: Boolean)
@@ -23,7 +23,7 @@ interface TasksContract {
         suspend fun updateTask(task: Task)
         suspend fun deleteTask(task: Task)
 
-        enum class Filter { ALL, FINISHED }
+        enum class Filter { ALL, FAVORITE }
     }
 
     enum class Action(val titleResId: Int) {

@@ -2,7 +2,6 @@ package com.example.todolist.screens.tasks
 
 import com.example.todolist.extension.unit
 import com.example.todolist.model.Task
-import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.ALL
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -15,7 +14,12 @@ class TasksPresenter @Inject constructor(
 
     override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
 
-    override fun start() = select(ALL)
+    lateinit var filter: TasksContract.Storage.Filter
+
+    override fun start(filter: TasksContract.Storage.Filter) {
+        select(filter)
+        this.filter = filter
+    }
 
     private fun select(filter: TasksContract.Storage.Filter) {
         launch(Dispatchers.Main) {
@@ -30,24 +34,28 @@ class TasksPresenter @Inject constructor(
     override fun insert(title: String?, description: String) =
         launch {
             storage.insertTask(Task(title, description))
-            select(ALL)
+            select(filter)
         }.unit()
 
     override fun update(id: Int, title: String?, description: String, favorite: Boolean) {
         launch {
             storage.updateTask(Task(id, title, description, favorite))
-            select(ALL)
+            select(filter)
         }
     }
 
     override fun favorite(id: Int, title: String?, description: String, favorite: Boolean) {
-        update(id, title, description, !favorite)
+        if (filter == TasksContract.Storage.Filter.FAVORITE) {
+            delete(Task(id, title, description, favorite))
+        } else {
+            update(id, title, description, !favorite)
+        }
     }
 
     override fun delete(task: Task) {
         launch {
             storage.deleteTask(task)
-            select(ALL)
+            select(filter)
         }
     }
 }

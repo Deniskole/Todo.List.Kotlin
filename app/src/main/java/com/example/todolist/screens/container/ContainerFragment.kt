@@ -7,27 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.todolist.R
+import com.example.todolist.screens.tasks.TasksContract
 import com.example.todolist.screens.tasks.TasksFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import javax.inject.Inject
-
-class ContainerFragment : Fragment(), BottomNavigationView.OnNavigationItemSelectedListener {
-
-    @Inject
-    lateinit var presenter: ContainerContract.Presenter
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        //                .add(R.id.container, TasksFragment(), TasksFragment::class.java.name)
+import kotlinx.android.synthetic.main.fragment_container.*
 
 
-//        activity?.supportFragmentManager?.beginTransaction()
-//                ?.add(R.id.container, TasksFragment(), TasksFragment::class.java.name)
-//            ?.commit()
-
-
-    }
+class ContainerFragment : Fragment(), ContainerContract.View,
+    BottomNavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,14 +23,61 @@ class ContainerFragment : Fragment(), BottomNavigationView.OnNavigationItemSelec
         return inflater.inflate(R.layout.fragment_container, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    // region BottomNavigationView
+        navigationView.setOnNavigationItemSelectedListener(this)
+
+        if (childFragmentManager.findFragmentByTag("ALL") == null) {
+            childFragmentManager.beginTransaction()
+                .add(
+                    R.id.container,
+                    TasksFragment(TasksContract.Storage.Filter.ALL),
+                    "ALL"
+                )
+                .commit()
+        }
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        presenter.select(item.itemId)
+        showScreen(item.itemId)
         return true
     }
 
-    // endregion
+    override fun showScreen(id: Int) {
+        val fragmentA = childFragmentManager.findFragmentByTag("ALL")
+        val fragmentB = childFragmentManager.findFragmentByTag("FAVORITE")
 
+        fragmentA?.onHiddenChanged(true)
+
+        when (id) {
+            ContainerContract.NavigationItem.ALL -> {
+                if (fragmentA != null) {
+                    childFragmentManager.beginTransaction().show(fragmentA).commit()
+                }
+
+                if (fragmentB != null) {
+                    childFragmentManager.beginTransaction().hide(fragmentB).commit()
+                }
+            }
+
+            ContainerContract.NavigationItem.FAVORITE -> {
+                if (fragmentB != null) {
+                    childFragmentManager.beginTransaction().show(fragmentB).commit()
+                }
+                if (childFragmentManager.findFragmentByTag("FAVORITE") == null) {
+                    childFragmentManager.beginTransaction().add(
+                        R.id.container,
+                        TasksFragment(TasksContract.Storage.Filter.FAVORITE),
+                        "FAVORITE"
+                    )
+                        .commit()
+                }
+
+                if (fragmentA != null) {
+                    childFragmentManager.beginTransaction().hide(fragmentA).commit()
+                }
+            }
+        }
+    }
 }
