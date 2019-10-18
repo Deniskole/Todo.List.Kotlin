@@ -9,7 +9,7 @@ interface TasksContract {
     }
 
     interface Presenter {
-        fun show(filter: Storage.Filter)
+        fun start()
         fun buttonDidPress(filter: Storage.Filter)
         fun insert(title: String?, description: String)
         fun update(id: Int, title: String?, description: String, favorite: Boolean)
