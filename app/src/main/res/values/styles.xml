@@ -3,4 +3,11 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight" />
 
+
+    <style name="ThemeOverlay" />
+
+    <style name="ThemeOverlay.BottomNavigation">
+        <item name="colorPrimary">@color/white</item>
+    </style>
+
 </resources>

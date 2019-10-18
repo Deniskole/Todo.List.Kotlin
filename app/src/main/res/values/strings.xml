@@ -21,5 +21,6 @@
     <string name="all_tasks">All tasks</string>
     <string name="favorite">Favorite</string>
     <string name="night_mode">Night mode</string>
+    <string name="all">All</string>
     <!-- endregion -->
 </resources>
