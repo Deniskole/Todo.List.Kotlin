@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import com.example.todolist.R
 import com.example.todolist.screens.tasks.TasksContract
 import com.example.todolist.screens.tasks.TasksFragment
+import com.example.todolist.util.Constants.Companion.FILTER_ALL
+import com.example.todolist.util.Constants.Companion.FILTER_FAVORITE
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.fragment_container.*
 
@@ -28,12 +30,12 @@ class ContainerFragment : Fragment(), ContainerContract.View,
 
         navigationView.setOnNavigationItemSelectedListener(this)
 
-        if (childFragmentManager.findFragmentByTag("ALL") == null) {
+        if (childFragmentManager.findFragmentByTag(FILTER_ALL) == null) {
             childFragmentManager.beginTransaction()
                 .add(
                     R.id.container,
                     TasksFragment(TasksContract.Storage.Filter.ALL),
-                    "ALL"
+                    FILTER_ALL
                 )
                 .commit()
         }
@@ -45,10 +47,8 @@ class ContainerFragment : Fragment(), ContainerContract.View,
     }
 
     override fun showScreen(id: Int) {
-        val fragmentA = childFragmentManager.findFragmentByTag("ALL")
-        val fragmentB = childFragmentManager.findFragmentByTag("FAVORITE")
-
-        fragmentA?.onHiddenChanged(true)
+        val fragmentA = childFragmentManager.findFragmentByTag(FILTER_ALL)
+        val fragmentB = childFragmentManager.findFragmentByTag(FILTER_FAVORITE)
 
         when (id) {
             ContainerContract.NavigationItem.ALL -> {
@@ -60,16 +60,15 @@ class ContainerFragment : Fragment(), ContainerContract.View,
                     childFragmentManager.beginTransaction().hide(fragmentB).commit()
                 }
             }
-
             ContainerContract.NavigationItem.FAVORITE -> {
                 if (fragmentB != null) {
                     childFragmentManager.beginTransaction().show(fragmentB).commit()
                 }
-                if (childFragmentManager.findFragmentByTag("FAVORITE") == null) {
+                if (childFragmentManager.findFragmentByTag(FILTER_FAVORITE) == null) {
                     childFragmentManager.beginTransaction().add(
                         R.id.container,
                         TasksFragment(TasksContract.Storage.Filter.FAVORITE),
-                        "FAVORITE"
+                        FILTER_FAVORITE
                     )
                         .commit()
                 }

@@ -31,7 +31,10 @@ class TasksFragment(private val filter: TasksContract.Storage.Filter) : Fragment
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        presenter.start(filter)
+
+        if (!hidden) {
+            presenter.start(filter)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -147,7 +150,6 @@ class TasksFragment(private val filter: TasksContract.Storage.Filter) : Fragment
 
         with(builder.create()) {
             onShowListener?.also { setOnShowListener(it) }
-
             show()
         }
     }
