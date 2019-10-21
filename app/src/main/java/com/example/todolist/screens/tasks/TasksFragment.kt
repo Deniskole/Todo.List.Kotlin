@@ -10,24 +10,38 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todolist.R
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
 import com.example.todolist.common.di.scenes.TasksModule
 import com.example.todolist.model.Task
 import com.example.todolist.screens.tasks.TasksContract.Action.*
+import com.example.todolist.util.Constants.Companion.FILTER_KEY
 import kotlinx.android.synthetic.main.dialog_input.view.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 import toothpick.Scope
 import toothpick.Toothpick
+import java.io.Serializable
 import javax.inject.Inject
 
-class TasksFragment(private val filter: TasksContract.Storage.Filter) : Fragment(),
+
+class TasksFragment : Fragment(),
     OnViewHolderClickListener, OnViewHolderLongClickListener, TasksContract.View {
+
+    @Inject lateinit var presenter: TasksPresenter
     private val adapter = TasksAdapter(this)
-    @Inject
-    lateinit var presenter: TasksPresenter
+    lateinit var filter: TasksContract.Storage.Filter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        filter = arguments?.getSerializable(FILTER_KEY) as TasksContract.Storage.Filter
+        val scope: Scope = Toothpick.openScopes(requireContext().applicationContext, this)
+        scope.installModules(TasksModule(this))
+        Toothpick.inject(this, scope)
+
+        setHasOptionsMenu(true)
+    }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
@@ -37,20 +51,18 @@ class TasksFragment(private val filter: TasksContract.Storage.Filter) : Fragment
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val scope: Scope = Toothpick.openScopes(requireContext().applicationContext, this)
-        scope.installModules(TasksModule(this))
-        Toothpick.inject(this, scope)
-
-        setHasOptionsMenu(true)
+    fun newInstance(filter: TasksContract.Storage.Filter): TasksFragment {
+        val myFragment = TasksFragment()
+        val args = Bundle()
+        args.putSerializable(FILTER_KEY, filter as Serializable)
+        myFragment.arguments = args
+        return myFragment
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_tasks, container, false)
+        return inflater.inflate(com.example.todolist.R.layout.fragment_tasks, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,30 +72,35 @@ class TasksFragment(private val filter: TasksContract.Storage.Filter) : Fragment
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
-        recyclerView.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                layoutManager.orientation
+            )
+        )
 
         presenter.start(filter)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main, menu)
+        inflater.inflate(com.example.todolist.R.menu.main, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.addItem -> actionTaskDialog(NEW)
+            com.example.todolist.R.id.addItem -> actionTaskDialog(NEW)
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun onViewHolderClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
         when (id) {
-            R.id.taskFavoriteImageView -> {
+            com.example.todolist.R.id.taskFavoriteImageView -> {
                 val task = adapter.getTask(position)
                 presenter.favorite(task.id, task.title, task.descriptions, task.favorite)
             }
-            R.id.container -> actionTaskDialog(EDIT, position)
+            com.example.todolist.R.id.container -> actionTaskDialog(EDIT, position)
         }
     }
 
@@ -104,12 +121,13 @@ class TasksFragment(private val filter: TasksContract.Storage.Filter) : Fragment
 
         when (action) {
             NEW, EDIT -> {
-                val view = View.inflate(context, R.layout.dialog_input, null)
+                val view =
+                    View.inflate(context, com.example.todolist.R.layout.dialog_input, null)
                 builder.apply {
                     setView(view)
 
                     if (task == null) {
-                        setPositiveButton(R.string.add) { _, _ ->
+                        setPositiveButton(com.example.todolist.R.string.add) { _, _ ->
                             presenter.insert(
                                 view.titleEditText.text.toString(),
                                 view.descriptionEditText.text.toString()
@@ -119,7 +137,7 @@ class TasksFragment(private val filter: TasksContract.Storage.Filter) : Fragment
                         view.titleEditText.setText(task.title)
                         view.descriptionEditText.setText(task.descriptions)
 
-                        setPositiveButton(R.string.save) { _, _ ->
+                        setPositiveButton(com.example.todolist.R.string.save) { _, _ ->
                             presenter.update(
                                 task.id,
                                 view.titleEditText.text.toString(),
@@ -128,7 +146,8 @@ class TasksFragment(private val filter: TasksContract.Storage.Filter) : Fragment
                             )
                         }
                     }
-                }.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
+                }
+                    .setNegativeButton(com.example.todolist.R.string.cancel) { dialog, _ -> dialog.cancel() }
 
                 onShowListener = DialogInterface.OnShowListener { dialog ->
                     if (dialog !is AlertDialog) return@OnShowListener
@@ -141,8 +160,8 @@ class TasksFragment(private val filter: TasksContract.Storage.Filter) : Fragment
                 }
             }
             DELETE -> {
-                builder.setNegativeButton(R.string.cancel) { _, _ -> }
-                    .setPositiveButton(R.string.delete) { _, _ ->
+                builder.setNegativeButton(com.example.todolist.R.string.cancel) { _, _ -> }
+                    .setPositiveButton(com.example.todolist.R.string.delete) { _, _ ->
                         if (position != null) presenter.delete(adapter.getTask(position))
                     }
             }

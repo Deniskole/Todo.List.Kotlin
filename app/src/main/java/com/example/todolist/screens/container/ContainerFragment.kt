@@ -34,7 +34,7 @@ class ContainerFragment : Fragment(), ContainerContract.View,
             childFragmentManager.beginTransaction()
                 .add(
                     R.id.container,
-                    TasksFragment(TasksContract.Storage.Filter.ALL),
+                    TasksFragment().newInstance(TasksContract.Storage.Filter.ALL),
                     FILTER_ALL
                 )
                 .commit()
@@ -49,34 +49,24 @@ class ContainerFragment : Fragment(), ContainerContract.View,
     override fun showScreen(id: Int) {
         val fragmentA = childFragmentManager.findFragmentByTag(FILTER_ALL)
         val fragmentB = childFragmentManager.findFragmentByTag(FILTER_FAVORITE)
+        val transaction = childFragmentManager.beginTransaction()
 
-        when (id) {
-            ContainerContract.NavigationItem.ALL -> {
-                if (fragmentA != null) {
-                    childFragmentManager.beginTransaction().show(fragmentA).commit()
+        with(transaction) {
+            when (id) {
+                ContainerContract.NavigationItem.ALL -> {
+                    fragmentA?.let(::show)
+                    fragmentB?.let(::hide)
                 }
-
-                if (fragmentB != null) {
-                    childFragmentManager.beginTransaction().hide(fragmentB).commit()
-                }
-            }
-            ContainerContract.NavigationItem.FAVORITE -> {
-                if (fragmentB != null) {
-                    childFragmentManager.beginTransaction().show(fragmentB).commit()
-                }
-                if (childFragmentManager.findFragmentByTag(FILTER_FAVORITE) == null) {
-                    childFragmentManager.beginTransaction().add(
+                ContainerContract.NavigationItem.FAVORITE -> {
+                    fragmentB?.let(::show) ?: add(
                         R.id.container,
-                        TasksFragment(TasksContract.Storage.Filter.FAVORITE),
+                        TasksFragment().newInstance(TasksContract.Storage.Filter.FAVORITE),
                         FILTER_FAVORITE
                     )
-                        .commit()
-                }
-
-                if (fragmentA != null) {
-                    childFragmentManager.beginTransaction().hide(fragmentA).commit()
+                    fragmentA?.let(::hide)
                 }
             }
+            commit()
         }
     }
 }
