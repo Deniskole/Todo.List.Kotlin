@@ -33,6 +33,16 @@ class TasksFragment : Fragment(),
     private val adapter = TasksAdapter(this)
     lateinit var filter: TasksContract.Storage.Filter
 
+    companion object {
+        fun newInstance(filter: TasksContract.Storage.Filter): TasksFragment {
+            val myFragment = TasksFragment()
+            val args = Bundle()
+            args.putInt(FILTER_KEY, filter.ordinal)
+            myFragment.arguments = args
+            return myFragment
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -49,17 +59,6 @@ class TasksFragment : Fragment(),
 
         if (!hidden) {
             presenter.start(filter)
-        }
-    }
-
-
-    companion object {
-        fun newInstance(filter: TasksContract.Storage.Filter): TasksFragment {
-            val myFragment = TasksFragment()
-            val args = Bundle()
-            args.putInt(FILTER_KEY, filter.ordinal)
-            myFragment.arguments = args
-            return myFragment
         }
     }
 
