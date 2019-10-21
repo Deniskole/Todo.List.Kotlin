@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import com.example.todolist.R
 import com.example.todolist.screens.tasks.TasksContract
 import com.example.todolist.screens.tasks.TasksFragment
-import com.example.todolist.util.Constants.Companion.FILTER_ALL
-import com.example.todolist.util.Constants.Companion.FILTER_FAVORITE
+import com.example.todolist.util.Constants.FILTER_ALL
+import com.example.todolist.util.Constants.FILTER_FAVORITE
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.fragment_container.*
 
@@ -34,7 +34,7 @@ class ContainerFragment : Fragment(), ContainerContract.View,
             childFragmentManager.beginTransaction()
                 .add(
                     R.id.container,
-                    TasksFragment().newInstance(TasksContract.Storage.Filter.ALL),
+                    TasksFragment.newInstance(TasksContract.Storage.Filter.ALL),
                     FILTER_ALL
                 )
                 .commit()
@@ -60,7 +60,7 @@ class ContainerFragment : Fragment(), ContainerContract.View,
                 ContainerContract.NavigationItem.FAVORITE -> {
                     fragmentB?.let(::show) ?: add(
                         R.id.container,
-                        TasksFragment().newInstance(TasksContract.Storage.Filter.FAVORITE),
+                        TasksFragment.newInstance(TasksContract.Storage.Filter.FAVORITE),
                         FILTER_FAVORITE
                     )
                     fragmentA?.let(::hide)
