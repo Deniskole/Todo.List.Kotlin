@@ -12,9 +12,4 @@ interface ContainerContract {
             const val FAVORITE = R.id.itemFavorite
         }
     }
-
-    interface View {
-//        TODO: Why do you need this method?
-//        fun showScreen(@NavigationItem id: Int)
-    }
 }

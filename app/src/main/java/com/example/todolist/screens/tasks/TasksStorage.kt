@@ -1,5 +1,6 @@
 package com.example.todolist.screens.tasks
 
+import android.util.Log
 import com.example.todolist.data.AppDatabase
 import com.example.todolist.model.Task
 import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.ALL
@@ -20,6 +21,9 @@ class TasksStorage @Inject constructor(private val db: AppDatabase) : TasksContr
 
     override suspend fun updateTask(task: Task) =
         db.taskDao().updateTask(task.id, task.title, task.descriptions, task.favorite)
+
+    override suspend fun favoriteTask(id: Int, favorite: Boolean) =
+        db.taskDao().favoriteTask(id, favorite)
 
     override suspend fun deleteTask(task: Task) = db.taskDao().deleteTask(task)
 }

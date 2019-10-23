@@ -14,7 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.fragment_container.*
 
 
-class ContainerFragment : Fragment(), ContainerContract.View,
+class ContainerFragment : Fragment(),
     BottomNavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreateView(

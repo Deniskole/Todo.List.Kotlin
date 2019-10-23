@@ -36,15 +36,7 @@ class TasksFragment : Fragment(),
 
     companion object {
         fun tag(@IdRes id: Int) = "${this::class.java.name}-$id"
-//      TODO: Simplify
-//
-//        fun newInstance(filter: TasksContract.Storage.Filter): TasksFragment {
-//            val myFragment = TasksFragment()
-//            val args = Bundle()
-//            args.putInt(FILTER_KEY, filter.ordinal)
-//            myFragment.arguments = args
-//            return myFragment
-//        }
+
         fun newInstance(filter: TasksContract.Storage.Filter) = TasksFragment().apply {
             arguments = Bundle(1).apply {
                 putInt(FILTER_KEY, filter.ordinal)
@@ -56,7 +48,7 @@ class TasksFragment : Fragment(),
         super.onCreate(savedInstanceState)
 
         val scope: Scope = Toothpick.openScopes(requireContext().applicationContext, this)
-        filter = TasksContract.Storage.Filter.values()[/* TODO: `requireArguments()`*/arguments?.getInt(FILTER_KEY) ?: 0]
+        filter = TasksContract.Storage.Filter.values()[requireArguments().getInt(FILTER_KEY)]
         scope.installModules(TasksModule(this))
         Toothpick.inject(this, scope)
 
@@ -68,7 +60,7 @@ class TasksFragment : Fragment(),
 
         if (!hidden) {
             // TODO: Called twice
-            presenter.start(filter)
+            presenter.start()
         }
     }
 
@@ -91,9 +83,8 @@ class TasksFragment : Fragment(),
                 layoutManager.orientation
             )
         )
-
         // TODO: Called twice
-        presenter.start(filter)
+        presenter.start()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -112,7 +103,7 @@ class TasksFragment : Fragment(),
         when (id) {
             R.id.taskFavoriteImageView -> {
                 val task = adapter.getTask(position)
-                presenter.favorite(task.id, task.title, task.descriptions, task.favorite)
+                presenter.favorite(task.id, task.favorite)
             }
             R.id.container -> actionTaskDialog(EDIT, position)
         }
@@ -176,7 +167,7 @@ class TasksFragment : Fragment(),
             DELETE -> {
                 builder.setNegativeButton(R.string.cancel) { _, _ -> }
                     .setPositiveButton(R.string.delete) { _, _ ->
-                        if (position != null) presenter.delete(adapter.getTask(position))
+                        if (position != null) presenter.remove(adapter.getTask(position))
                     }
             }
         }
