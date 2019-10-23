@@ -14,6 +14,7 @@ interface ContainerContract {
     }
 
     interface View {
-        fun showScreen(@NavigationItem id: Int)
+//        TODO: Why do you need this method?
+//        fun showScreen(@NavigationItem id: Int)
     }
 }

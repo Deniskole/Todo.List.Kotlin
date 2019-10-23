@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
+import androidx.annotation.IdRes
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -34,12 +35,20 @@ class TasksFragment : Fragment(),
     lateinit var filter: TasksContract.Storage.Filter
 
     companion object {
-        fun newInstance(filter: TasksContract.Storage.Filter): TasksFragment {
-            val myFragment = TasksFragment()
-            val args = Bundle()
-            args.putInt(FILTER_KEY, filter.ordinal)
-            myFragment.arguments = args
-            return myFragment
+        fun tag(@IdRes id: Int) = "${this::class.java.name}-$id"
+//      TODO: Simplify
+//
+//        fun newInstance(filter: TasksContract.Storage.Filter): TasksFragment {
+//            val myFragment = TasksFragment()
+//            val args = Bundle()
+//            args.putInt(FILTER_KEY, filter.ordinal)
+//            myFragment.arguments = args
+//            return myFragment
+//        }
+        fun newInstance(filter: TasksContract.Storage.Filter) = TasksFragment().apply {
+            arguments = Bundle(1).apply {
+                putInt(FILTER_KEY, filter.ordinal)
+            }
         }
     }
 
@@ -47,7 +56,7 @@ class TasksFragment : Fragment(),
         super.onCreate(savedInstanceState)
 
         val scope: Scope = Toothpick.openScopes(requireContext().applicationContext, this)
-        filter = TasksContract.Storage.Filter.values()[arguments?.getInt(FILTER_KEY) ?: 0]
+        filter = TasksContract.Storage.Filter.values()[/* TODO: `requireArguments()`*/arguments?.getInt(FILTER_KEY) ?: 0]
         scope.installModules(TasksModule(this))
         Toothpick.inject(this, scope)
 
@@ -58,6 +67,7 @@ class TasksFragment : Fragment(),
         super.onHiddenChanged(hidden)
 
         if (!hidden) {
+            // TODO: Called twice
             presenter.start(filter)
         }
     }
@@ -82,6 +92,7 @@ class TasksFragment : Fragment(),
             )
         )
 
+        // TODO: Called twice
         presenter.start(filter)
     }
 

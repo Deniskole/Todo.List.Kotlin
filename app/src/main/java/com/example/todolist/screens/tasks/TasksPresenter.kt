@@ -12,16 +12,18 @@ class TasksPresenter @Inject constructor(
     private val storage: TasksContract.Storage
 ) : CoroutineScope, TasksContract.Presenter {
 
+    // TODO: Usually default coroutine context is Main.
     override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
 
     lateinit var filter: TasksContract.Storage.Filter
 
+    // TODO: method `start()` should not have any parameters. Inject filter with DI.
     override fun start(filter: TasksContract.Storage.Filter) {
         select(filter)
         this.filter = filter
     }
 
-    private fun select(filter: TasksContract.Storage.Filter) {
+    private fun select(filter: TasksContract.Storage.Filter /* TODO: Do you need this parameter???? */) {
         launch(Dispatchers.Main) {
             view.showData(withContext(Dispatchers.IO) {
                 storage.getTasks(filter).toMutableList()
@@ -45,6 +47,7 @@ class TasksPresenter @Inject constructor(
     }
 
     override fun favorite(id: Int, title: String?, description: String, favorite: Boolean) {
+        /* TODO: WHY DELETE????? */
         if (filter == TasksContract.Storage.Filter.FAVORITE) {
             delete(Task(id, title, description, favorite))
         } else {

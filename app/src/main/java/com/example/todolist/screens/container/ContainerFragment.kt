@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.todolist.R
+import com.example.todolist.extension.unit
 import com.example.todolist.screens.tasks.TasksContract
 import com.example.todolist.screens.tasks.TasksFragment
-import com.example.todolist.util.Constants.FILTER_ALL
-import com.example.todolist.util.Constants.FILTER_FAVORITE
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.fragment_container.*
 
@@ -30,43 +29,32 @@ class ContainerFragment : Fragment(), ContainerContract.View,
 
         navigationView.setOnNavigationItemSelectedListener(this)
 
-        if (childFragmentManager.findFragmentByTag(FILTER_ALL) == null) {
-            childFragmentManager.beginTransaction()
-                .add(
-                    R.id.container,
-                    TasksFragment.newInstance(TasksContract.Storage.Filter.ALL),
-                    FILTER_ALL
-                )
-                .commit()
-        }
+        showScreen(ContainerContract.NavigationItem.ALL, true)
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        showScreen(item.itemId)
-        return true
-    }
+    override fun onNavigationItemSelected(item: MenuItem) = showScreen(item.itemId).let { true }
 
-    override fun showScreen(id: Int) {
-        val fragmentA = childFragmentManager.findFragmentByTag(FILTER_ALL)
-        val fragmentB = childFragmentManager.findFragmentByTag(FILTER_FAVORITE)
-        val transaction = childFragmentManager.beginTransaction()
+    private fun showScreen(id: Int, justCreate: Boolean = false) =
+        with(childFragmentManager.beginTransaction()) {
+            val previousTag = TasksFragment.tag(navigationView.selectedItemId)
+            val previous = childFragmentManager.findFragmentByTag(previousTag)
 
-        with(transaction) {
-            when (id) {
-                ContainerContract.NavigationItem.ALL -> {
-                    fragmentA?.let(::show)
-                    fragmentB?.let(::hide)
-                }
-                ContainerContract.NavigationItem.FAVORITE -> {
-                    fragmentB?.let(::show) ?: add(
-                        R.id.container,
-                        TasksFragment.newInstance(TasksContract.Storage.Filter.FAVORITE),
-                        FILTER_FAVORITE
-                    )
-                    fragmentA?.let(::hide)
-                }
+            val nextTag = TasksFragment.tag(id)
+            val next = childFragmentManager.findFragmentByTag(nextTag)
+            val nextFilter = when (id) {
+                ContainerContract.NavigationItem.ALL -> TasksContract.Storage.Filter.ALL
+                ContainerContract.NavigationItem.FAVORITE -> TasksContract.Storage.Filter.FAVORITE
+                else -> throw IllegalArgumentException()
             }
+
+            if (previous != null && !justCreate) hide(previous)
+
+            if (next == null) {
+                add(R.id.container, TasksFragment.newInstance(nextFilter), nextTag)
+            } else if (!justCreate) {
+                show(next)
+            }
+
             commit()
-        }
-    }
+        }.unit()
 }
