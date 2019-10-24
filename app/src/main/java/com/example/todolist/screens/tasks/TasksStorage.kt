@@ -1,6 +1,5 @@
 package com.example.todolist.screens.tasks
 
-import android.util.Log
 import com.example.todolist.data.AppDatabase
 import com.example.todolist.model.Task
 import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.ALL

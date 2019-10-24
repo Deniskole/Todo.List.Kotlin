@@ -15,6 +15,7 @@ import com.example.todolist.R
 import com.example.todolist.adapter.OnViewHolderClickListener
 import com.example.todolist.adapter.OnViewHolderLongClickListener
 import com.example.todolist.adapter.TasksAdapter
+import com.example.todolist.common.di.scenes.ContainerModule
 import com.example.todolist.common.di.scenes.TasksModule
 import com.example.todolist.model.Task
 import com.example.todolist.screens.tasks.TasksContract.Action.*
@@ -49,7 +50,7 @@ class TasksFragment : Fragment(),
 
         val scope: Scope = Toothpick.openScopes(requireContext().applicationContext, this)
         filter = TasksContract.Storage.Filter.values()[requireArguments().getInt(FILTER_KEY)]
-        scope.installModules(TasksModule(this))
+        scope.installModules(ContainerModule(this), TasksModule(this))
         Toothpick.inject(this, scope)
 
         setHasOptionsMenu(true)
@@ -59,7 +60,6 @@ class TasksFragment : Fragment(),
         super.onHiddenChanged(hidden)
 
         if (!hidden) {
-            // TODO: Called twice
             presenter.start()
         }
     }
@@ -83,7 +83,6 @@ class TasksFragment : Fragment(),
                 layoutManager.orientation
             )
         )
-        // TODO: Called twice
         presenter.start()
     }
 

@@ -7,7 +7,6 @@ import toothpick.config.Module
 
 class TasksModule(fragment: TasksFragment) : Module() {
     init {
-        bind(TasksContract.Storage.Filter::class.java).toInstance(fragment.filter)
         bind(TasksContract.View::class.java).toInstance(fragment)
         bind(TasksContract.Presenter::class.java).to(TasksPresenter::class.java).singleton()
     }
