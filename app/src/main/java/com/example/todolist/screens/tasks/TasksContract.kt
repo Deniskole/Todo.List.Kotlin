@@ -13,6 +13,7 @@ interface TasksContract {
         // TODO: Naming. Should not be the same as in the storage.
         //  It is different operation and should have business logic naming.
         fun insert(title: String?, description: String)
+
         fun update(id: Int, title: String?, description: String, favorite: Boolean)
         fun favorite(id: Int, favorite: Boolean)
         fun remove(task: Task)
@@ -33,4 +34,12 @@ interface TasksContract {
         EDIT(R.string.edit),
         DELETE(R.string.delete)
     }
+}
+
+sealed class Task(val title: String?, val description: String, val favorite: Boolean) {
+    class Firebase(id: String, title: String?, description: String, favorite: Boolean) :
+        com.example.todolist.screens.tasks.Task(title, description, favorite)
+
+    class Database(id: Int, title: String?, description: String, favorite: Boolean) :
+        com.example.todolist.screens.tasks.Task(title, description, favorite)
 }

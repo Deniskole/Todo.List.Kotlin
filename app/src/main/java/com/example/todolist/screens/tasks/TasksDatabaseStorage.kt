@@ -7,7 +7,7 @@ import com.example.todolist.screens.tasks.TasksContract.Storage.Filter.FAVORITE
 import javax.inject.Inject
 
 
-class TasksStorage @Inject constructor(private val db: AppDatabase) : TasksContract.Storage {
+class TasksDatabaseStorage @Inject constructor(private val db: AppDatabase) : TasksContract.Storage {
 
     override suspend fun getTasks(filter: TasksContract.Storage.Filter): List<Task> {
         return when (filter) {
