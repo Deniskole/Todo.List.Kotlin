@@ -1,8 +1,11 @@
 package com.example.todolist.model
 
-class TaskFireBase(
-    val id: String,
-    val title: String,
-    val description: String,
-    val favorite: Boolean
+import com.google.firebase.database.Exclude
+
+data class TaskFireBase(
+    @get:Exclude
+    var id: String = "",
+    val title: String? = "",
+    val description: String = "",
+    val favorite: Boolean = false
 )
