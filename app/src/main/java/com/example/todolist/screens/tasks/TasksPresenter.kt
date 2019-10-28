@@ -42,10 +42,11 @@ class TasksPresenter @Inject constructor(
         }
     }
 
-    override fun favorite(id: Int, favorite: Boolean) {
+    override fun favorite(task: Task) {
         launch {
             withContext(Dispatchers.IO) {
-                storage.favoriteTask(id, !favorite)
+                task.favorite = !task.favorite
+                storage.favoriteTask(task)
             }
             select()
         }

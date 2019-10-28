@@ -102,7 +102,7 @@ class TasksFragment : Fragment(),
         when (id) {
             R.id.taskFavoriteImageView -> {
                 val task = adapter.getTask(position)
-                presenter.favorite(task.id, task.favorite)
+                presenter.favorite(task)
             }
             R.id.container -> actionTaskDialog(EDIT, position)
         }

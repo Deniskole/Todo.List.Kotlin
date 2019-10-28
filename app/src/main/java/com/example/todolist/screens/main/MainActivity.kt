@@ -23,19 +23,7 @@ class MainActivity : AppCompatActivity() {
                 .add(R.id.container, ContainerFragment(), ContainerFragment::class.java.name)
                 .commit()
         }
-
-
-
-
-
     }
-
-
-    fun testClick(view: View){
-        val fireBase = TasksFireBaseStorage()
-        fireBase.insertTest()
-    }
-
 }
 
 

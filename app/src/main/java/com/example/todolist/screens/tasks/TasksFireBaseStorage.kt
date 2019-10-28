@@ -1,47 +1,23 @@
 package com.example.todolist.screens.tasks
 
-import android.util.Log
 import com.example.todolist.extension.await
 import com.example.todolist.model.Task
 import com.example.todolist.model.TaskFireBase
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
-class TasksFireBaseStorage @Inject constructor() :
-    TasksContract.Storage {
+class TasksFireBaseStorage : TasksContract.Storage {
 
-    var taskList: MutableList<TaskFireBase> = mutableListOf()
+    val taskList = mutableListOf<Task>()
 
     private var reff: DatabaseReference = FirebaseDatabase
         .getInstance().reference
 
-
-    // TODO: debug button delete later
-    fun insertTest() {
-        //Read All Data
-        GlobalScope.launch {
-            val result = reff.await()
-            if (result.exists()) {
-                for (dataSnapsShot in result.children) {
-                    val task = dataSnapsShot.getValue(TaskFireBase::class.java)
-                    if (task != null) {
-                        task.id = dataSnapsShot.key.toString()
-                        taskList.add(task)
-                        Log.d("TAG", task.id)
-                    }
-                }
-            }
-        }
-        //Read All Data
-    }
-
-
     override suspend fun getTasks(filter: TasksContract.Storage.Filter): List<Task> {
 
-        //Read All Data
         GlobalScope.launch {
             val result = reff.await()
             if (result.exists()) {
@@ -49,16 +25,13 @@ class TasksFireBaseStorage @Inject constructor() :
                     val task = dataSnapsShot.getValue(TaskFireBase::class.java)
                     if (task != null) {
                         task.id = dataSnapsShot.key.toString()
-                        taskList.add(task)
-                        Log.d("TAG", task.id)
+                        taskList.add(task as Task)
+//                        Log.d("TAG", task.id)
                     }
                 }
             }
         }
-        //Read All Data
-
-        //Change correct type!
-        return taskList as List<Task>
+        return taskList
     }
 
     override suspend fun insertTask(task: Task) {
@@ -71,18 +44,20 @@ class TasksFireBaseStorage @Inject constructor() :
     }
 
     override suspend fun updateTask(task: Task) {
-        reff.child("tasks").child(task.id.toString()).setValue(task)
+        GlobalScope.launch {
+            reff.child(task.id.toString()).setValue(task).await()
+        }
     }
 
     override suspend fun deleteTask(task: Task) {
-        reff.child(task.id.toString()).removeValue()
+        GlobalScope.launch {
+            reff.child(task.id.toString()).removeValue().await()
+        }
     }
 
-    override suspend fun favoriteTask(id: Int, favorite: Boolean) {
-        reff.child(id.toString()).child("favorite").setValue(true)
+    override suspend fun favoriteTask(task: Task) {
+//        GlobalScope.launch {
+//            reff.child(id).child("favorite").setValue(true).await()
+//        }
     }
 }
-
-
-
-

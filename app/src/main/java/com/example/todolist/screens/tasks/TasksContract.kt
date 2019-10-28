@@ -10,12 +10,9 @@ interface TasksContract {
 
     interface Presenter {
         fun start()
-        // TODO: Naming. Should not be the same as in the storage.
-        //  It is different operation and should have business logic naming.
         fun insert(title: String?, description: String)
-
         fun update(id: Int, title: String?, description: String, favorite: Boolean)
-        fun favorite(id: Int, favorite: Boolean)
+        fun favorite(task: Task)
         fun remove(task: Task)
     }
 
@@ -24,7 +21,7 @@ interface TasksContract {
         suspend fun insertTask(task: Task)
         suspend fun updateTask(task: Task)
         suspend fun deleteTask(task: Task)
-        suspend fun favoriteTask(id: Int, favorite: Boolean)
+        suspend fun favoriteTask(task: Task)
 
         enum class Filter { ALL, FAVORITE }
     }
