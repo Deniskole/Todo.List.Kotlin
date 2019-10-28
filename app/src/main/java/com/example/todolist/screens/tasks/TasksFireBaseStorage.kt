@@ -7,6 +7,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import com.example.todolist.screens.tasks.Task as TaskSealed
 
 
 class TasksFireBaseStorage : TasksContract.Storage {
@@ -26,7 +27,6 @@ class TasksFireBaseStorage : TasksContract.Storage {
                     if (task != null) {
                         task.id = dataSnapsShot.key.toString()
                         taskList.add(task as Task)
-//                        Log.d("TAG", task.id)
                     }
                 }
             }
@@ -34,30 +34,38 @@ class TasksFireBaseStorage : TasksContract.Storage {
         return taskList
     }
 
-    override suspend fun insertTask(task: Task) {
-        val id = reff.push().key.toString()
-        val task3 = TaskFireBase(id, task.title, task.descriptions, task.favorite)
+    override suspend fun insertTask(task: TaskSealed) {
+        if (task is TaskSealed.Firebase) {
+            val id = reff.push().key.toString()
+            val task3 = TaskSealed.Firebase(id, task.title, task.description, task.favorite)
 
-        GlobalScope.launch {
-            reff.child(id).setValue(task3).await()
+            GlobalScope.launch {
+                reff.child(id).setValue(task3).await()
+            }
         }
     }
 
-    override suspend fun updateTask(task: Task) {
-        GlobalScope.launch {
-            reff.child(task.id.toString()).setValue(task).await()
+    override suspend fun updateTask(task: TaskSealed) {
+        if (task is TaskSealed.Firebase) {
+            GlobalScope.launch {
+                reff.child(task.id).setValue(task).await()
+            }
         }
     }
 
-    override suspend fun deleteTask(task: Task) {
-        GlobalScope.launch {
-            reff.child(task.id.toString()).removeValue().await()
+    override suspend fun deleteTask(task: TaskSealed) {
+        if (task is TaskSealed.Firebase) {
+            GlobalScope.launch {
+                reff.child(task.id).removeValue().await()
+            }
         }
     }
 
-    override suspend fun favoriteTask(task: Task) {
-//        GlobalScope.launch {
-//            reff.child(id).child("favorite").setValue(true).await()
-//        }
+    override suspend fun favoriteTask(task: TaskSealed) {
+        if (task is TaskSealed.Firebase) {
+            GlobalScope.launch {
+                reff.child(task.id).child("favorite").setValue(true).await()
+            }
+        }
     }
 }

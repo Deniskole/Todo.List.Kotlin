@@ -18,10 +18,10 @@ interface TasksContract {
 
     interface Storage {
         suspend fun getTasks(filter: Filter): List<Task>
-        suspend fun insertTask(task: Task)
-        suspend fun updateTask(task: Task)
-        suspend fun deleteTask(task: Task)
-        suspend fun favoriteTask(task: Task)
+        suspend fun insertTask(task: com.example.todolist.screens.tasks.Task)
+        suspend fun updateTask(task: com.example.todolist.screens.tasks.Task)
+        suspend fun deleteTask(task: com.example.todolist.screens.tasks.Task)
+        suspend fun favoriteTask(task: com.example.todolist.screens.tasks.Task)
 
         enum class Filter { ALL, FAVORITE }
     }
@@ -33,10 +33,3 @@ interface TasksContract {
     }
 }
 
-sealed class Task(val title: String?, val description: String, val favorite: Boolean) {
-    class Firebase(id: String, title: String?, description: String, favorite: Boolean) :
-        com.example.todolist.screens.tasks.Task(title, description, favorite)
-
-    class Database(id: Int, title: String?, description: String, favorite: Boolean) :
-        com.example.todolist.screens.tasks.Task(title, description, favorite)
-}
