@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.example.todolist.data.AppDatabase
 import com.example.todolist.screens.tasks.TasksContract
-import com.example.todolist.screens.tasks.TasksDatabaseStorage
+import com.example.todolist.screens.tasks.storage.TasksDatabaseStorage
 import toothpick.config.Module
 import javax.inject.Inject
 import javax.inject.Provider

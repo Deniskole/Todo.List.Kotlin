@@ -11,7 +11,7 @@ interface TasksContract {
     interface Presenter {
         fun start()
         fun insert(title: String?, description: String)
-        fun update(id: Int, title: String?, description: String, favorite: Boolean)
+        fun update(id: String, title: String?, description: String, favorite: Boolean)
         fun favorite(task: Task)
         fun remove(task: Task)
     }
@@ -33,10 +33,10 @@ interface TasksContract {
     }
 }
 
-sealed class Task(val title: String?, val description: String, val favorite: Boolean) {
-    class Firebase(id: String, title: String?, description: String, favorite: Boolean) :
-        com.example.todolist.screens.tasks.Task(title, description, favorite)
-
-    class Database(id: Int, title: String?, description: String, favorite: Boolean) :
-        com.example.todolist.screens.tasks.Task(title, description, favorite)
-}
+//sealed class Task(val title: String?, val description: String, val favorite: Boolean) {
+//    class Firebase(id: String, title: String?, description: String, favorite: Boolean) :
+//        com.example.todolist.screens.tasks.Task(title, description, favorite)
+//
+//    class Database(id: Int, title: String?, description: String, favorite: Boolean) :
+//        com.example.todolist.screens.tasks.Task(title, description, favorite)
+//}

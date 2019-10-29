@@ -2,6 +2,8 @@ package com.example.todolist.screens.tasks
 
 import com.example.todolist.extension.unit
 import com.example.todolist.model.Task
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -12,6 +14,12 @@ class TasksPresenter @Inject constructor(
     private val storage: TasksContract.Storage,
     private val filter: TasksContract.Storage.Filter
 ) : CoroutineScope, TasksContract.Presenter {
+
+    //Temp
+    private var reff: DatabaseReference = FirebaseDatabase
+        .getInstance().reference
+    //Temp
+
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
 
@@ -27,13 +35,15 @@ class TasksPresenter @Inject constructor(
         }
     }
 
+    //--?
     override fun insert(title: String?, description: String) = launch {
-        withContext(Dispatchers.IO) { storage.insertTask(Task(title, description)) }
+        val id = reff.push().key.toString()
+        withContext(Dispatchers.IO) { storage.insertTask(Task(id, title, description)) }
         select()
-
     }.unit()
 
-    override fun update(id: Int, title: String?, description: String, favorite: Boolean) {
+    //--?
+    override fun update(id: String, title: String?, description: String, favorite: Boolean) {
         launch {
             withContext(Dispatchers.IO) {
                 storage.updateTask(Task(id, title, description, favorite))

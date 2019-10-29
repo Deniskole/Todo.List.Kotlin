@@ -16,10 +16,10 @@ interface TaskDao {
 
     @Query("UPDATE task_table SET title=:title, descriptions=:description, " +
             "favorite=:favorite WHERE id = :id")
-    fun updateTask(id: Int, title: String?, description: String, favorite: Boolean)
+    fun updateTask(id: String, title: String?, description: String, favorite: Boolean)
 
     @Query("UPDATE task_table SET favorite=:favorite WHERE id = :id")
-    fun favoriteTask(id: Int, favorite: Boolean)
+    fun favoriteTask(id: String, favorite: Boolean)
 
     @Delete
     fun deleteTask(task: Task)
