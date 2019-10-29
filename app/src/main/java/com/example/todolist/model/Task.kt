@@ -10,6 +10,6 @@ data class Task constructor(
     @get:Exclude
     var id: String = "",
     val title: String? = null,
-    val descriptions: String,
+    val descriptions: String = "",
     var favorite: Boolean = false
 )
