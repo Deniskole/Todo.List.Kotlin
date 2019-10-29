@@ -21,17 +21,11 @@ class TasksPresenter @Inject constructor(
     }
 
     private fun select() {
-//        DataBase
         launch {
             view.showData(withContext(Dispatchers.IO) {
                 storage.getTasks(filter).toMutableList()
             })
         }
-
-//        //FireBase
-//        launch {
-//            view.showData(storage.getTasks(filter))
-//        }
     }
 
     override fun insert(title: String?, description: String) = launch {
