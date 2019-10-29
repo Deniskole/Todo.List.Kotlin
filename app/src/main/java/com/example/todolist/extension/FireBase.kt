@@ -16,14 +16,16 @@ suspend fun <T> Task<T>.await(): T = suspendCoroutine { continuation ->
 }
 
 
-suspend fun DatabaseReference.await(): DataSnapshot = suspendCoroutine { continuation ->
-    addValueEventListener(object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            continuation.resumeWithException(CancellationException())
-        }
+suspend fun DatabaseReference.await(): DataSnapshot =
 
-        override fun onDataChange(p0: DataSnapshot) {
-            continuation.resume(p0)
-        }
-    })
-}
+    suspendCoroutine { continuation ->
+        addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                continuation.resumeWithException(CancellationException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                continuation.resume(p0)
+            }
+        })
+    }

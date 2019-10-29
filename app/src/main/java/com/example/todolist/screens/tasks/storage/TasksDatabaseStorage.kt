@@ -21,7 +21,7 @@ class TasksDatabaseStorage @Inject constructor(private val db: AppDatabase) :
     override suspend fun insertTask(task: Task) = db.taskDao().insertTask(task)
 
     override suspend fun updateTask(task: Task) =
-        db.taskDao().updateTask(task.id, task.title, task.descriptions, task.favorite)
+        db.taskDao().updateTask(task.id, task.title, task.description, task.favorite)
 
     override suspend fun favoriteTask(task: Task) =
         db.taskDao().favoriteTask(task.id, task.favorite)

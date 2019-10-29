@@ -14,7 +14,7 @@ interface TaskDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTask(task: Task)
 
-    @Query("UPDATE task_table SET title=:title, descriptions=:description, " +
+    @Query("UPDATE task_table SET title=:title, description=:description, " +
             "favorite=:favorite WHERE id = :id")
     fun updateTask(id: String, title: String?, description: String, favorite: Boolean)
 

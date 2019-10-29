@@ -35,11 +35,11 @@ class TasksAdapter<L>(
             when (holder.itemViewType) {
                 TITLE_AND_DESCRIPTION.ordinal -> {
                     taskTitleTextView.text = task.title
-                    taskDescriptionTextView.text = task.descriptions
+                    taskDescriptionTextView.text = task.description
                     setItemColor(context, holder, task.favorite)
                 }
                 DESCRIPTION.ordinal -> {
-                    taskDescriptionTextView.text = task.descriptions
+                    taskDescriptionTextView.text = task.description
                     setItemColor(context, holder, task.favorite)
                 }
             }

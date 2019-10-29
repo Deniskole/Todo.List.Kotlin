@@ -15,11 +15,14 @@ import javax.inject.Provider
 class ApplicationModule(application: Application) : Module() {
     init {
         bind(Context::class.java).toInstance(application)
-        bind(TasksContract.Storage::class.java).to(TasksDatabaseStorage::class.java).singleton()
+
+//        bind(TasksContract.Storage::class.java).to(TasksDatabaseStorage::class.java).singleton()
+        bind(TasksContract.Storage::class.java).to(TasksFireBaseStorage::class.java).singleton()
+
         bind(AppDatabase::class.java)
             .toProvider(AppDataBaseProvider::class.java)
             .providesSingleton()
-        bind(TasksContract.Storage::class.java).to(TasksFireBaseStorage::class.java).singleton()
+
         bind(DatabaseReference::class.java).toInstance(FirebaseDatabase.getInstance().reference)
     }
 }

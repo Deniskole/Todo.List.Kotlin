@@ -139,7 +139,7 @@ class TasksFragment : Fragment(),
                         }
                     } else {
                         view.titleEditText.setText(task.title)
-                        view.descriptionEditText.setText(task.descriptions)
+                        view.descriptionEditText.setText(task.description)
 
                         setPositiveButton(R.string.save) { _, _ ->
                             presenter.update(
