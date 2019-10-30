@@ -18,7 +18,7 @@ interface TasksContract {
 
     interface Storage {
         suspend fun getTasks(filter: Filter): List<Task>
-        suspend fun insertTask(task: Task)
+        suspend fun insertTask(title: String?, description: String): Task?
         suspend fun updateTask(task: Task)
         suspend fun deleteTask(task: Task)
         suspend fun favoriteTask(task: Task)
@@ -32,11 +32,3 @@ interface TasksContract {
         DELETE(R.string.delete)
     }
 }
-
-//sealed class Task(val title: String?, val description: String, val favorite: Boolean) {
-//    class Firebase(id: String, title: String?, description: String, favorite: Boolean) :
-//        com.example.todolist.screens.tasks.Task(title, description, favorite)
-//
-//    class Database(id: Int, title: String?, description: String, favorite: Boolean) :
-//        com.example.todolist.screens.tasks.Task(title, description, favorite)
-//}

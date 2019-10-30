@@ -3,7 +3,6 @@ package com.example.todolist.screens.tasks
 import com.example.todolist.extension.unit
 import com.example.todolist.model.Task
 import kotlinx.coroutines.*
-import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -16,51 +15,37 @@ class TasksPresenter @Inject constructor(
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
 
-    override fun start() {
-        select()
-    }
+    override fun start() = updateView()
 
-    private fun select() {
-        launch {
-            view.showData(withContext(Dispatchers.IO) {
-                storage.getTasks(filter).toMutableList()
-            })
-        }
-    }
-
-    override fun insert(title: String?, description: String) = launch {
-        val id = UUID.randomUUID().toString()
-        withContext(Dispatchers.IO) { storage.insertTask(Task(id, title, description)) }
-        select()
+    private fun updateView() = launch {
+        view.showData(storage.getTasks(filter))
     }.unit()
 
-    override fun update(id: String, title: String?, description: String, favorite: Boolean) {
-        launch {
-            withContext(Dispatchers.IO) {
-                storage.updateTask(Task(id, title, description, favorite))
-            }
-            select()
-        }
-    }
+    override fun insert(title: String?, description: String) = launch {
+        storage.insertTask(title, description)
+        updateView()
+    }.unit()
 
-    override fun favorite(task: Task) {
+    override fun update(id: String, title: String?, description: String, favorite: Boolean) =
         launch {
-            withContext(Dispatchers.IO) {
-                val taskTemp = Task(task.id, task.title, task.description, !task.favorite)
-                storage.favoriteTask(taskTemp)
-            }
-            select()
-        }
-    }
+            storage.updateTask(Task(id, title, description, favorite))
+            updateView()
+        }.unit()
 
-    override fun remove(task: Task) {
-        launch {
-            withContext(Dispatchers.IO) {
-                storage.deleteTask(task)
-            }
-            select()
+    override fun favorite(task: Task) = launch {
+        withContext(Dispatchers.IO) {
+            val taskTemp = Task(task.id, task.title, task.description, !task.favorite)
+            storage.favoriteTask(taskTemp)
         }
-    }
+        updateView()
+    }.unit()
+
+    override fun remove(task: Task) = launch {
+        withContext(Dispatchers.IO) {
+            storage.deleteTask(task)
+        }
+        updateView()
+    }.unit()
 }
 
 
