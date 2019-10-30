@@ -100,10 +100,7 @@ class TasksFragment : Fragment(),
 
     override fun onViewHolderClick(holder: RecyclerView.ViewHolder, position: Int, id: Int) {
         when (id) {
-            R.id.taskFavoriteImageView -> {
-                val task = adapter.getTask(position)
-                presenter.favorite(task)
-            }
+            R.id.taskFavoriteImageView -> presenter.toggleFavorite(adapter.getTask(position))
             R.id.container -> actionTaskDialog(EDIT, position)
         }
     }

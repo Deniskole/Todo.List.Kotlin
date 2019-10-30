@@ -26,7 +26,8 @@ class TasksDatabaseStorage @Inject constructor(db: AppDatabase) :
         }
 
     override suspend fun updateTask(task: Task) = dao.updateTask(task.id, task.title, task.description)
-    override suspend fun favoriteTask(task: Task) = dao.favoriteTask(task.id, task.favorite)
+    override suspend fun favoriteTask(task: Task, isFavorite: Boolean) =
+        dao.favoriteTask(task.id, isFavorite)
     override suspend fun deleteTask(task: Task) = dao.deleteTask(task)
 }
 

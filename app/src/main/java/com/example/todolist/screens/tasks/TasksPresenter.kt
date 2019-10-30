@@ -2,7 +2,10 @@ package com.example.todolist.screens.tasks
 
 import com.example.todolist.extension.unit
 import com.example.todolist.model.Task
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -17,35 +20,27 @@ class TasksPresenter @Inject constructor(
 
     override fun start() = updateView()
 
-    private fun updateView() = launch {
-        view.showData(storage.getTasks(filter))
-    }.unit()
-
-    override fun insert(title: String?, description: String) = launch {
+    override fun insert(title: String?, description: String) = updateView {
         storage.insertTask(title, description)
-        updateView()
-    }.unit()
+    }
 
-    override fun update(id: String, title: String?, description: String, favorite: Boolean) =
+    override fun update(
+        id: String, title: String?, description: String, favorite: Boolean
+    ) = updateView {
+        storage.updateTask(Task(id, title, description, favorite))
+    }
+
+    override fun toggleFavorite(task: Task) = updateView {
+        storage.favoriteTask(task, !task.favorite)
+    }
+
+    override fun remove(task: Task) = updateView { storage.deleteTask(task) }
+
+    private fun updateView(block: suspend CoroutineScope.() -> Unit = {}) =
         launch {
-            storage.updateTask(Task(id, title, description, favorite))
-            updateView()
+            block()
+            view.showData(storage.getTasks(filter))
         }.unit()
-
-    override fun favorite(task: Task) = launch {
-        withContext(Dispatchers.IO) {
-            val taskTemp = Task(task.id, task.title, task.description, !task.favorite)
-            storage.favoriteTask(taskTemp)
-        }
-        updateView()
-    }.unit()
-
-    override fun remove(task: Task) = launch {
-        withContext(Dispatchers.IO) {
-            storage.deleteTask(task)
-        }
-        updateView()
-    }.unit()
 }
 
 

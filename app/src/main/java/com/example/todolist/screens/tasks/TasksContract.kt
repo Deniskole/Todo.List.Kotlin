@@ -12,7 +12,7 @@ interface TasksContract {
         fun start()
         fun insert(title: String?, description: String)
         fun update(id: String, title: String?, description: String, favorite: Boolean)
-        fun favorite(task: Task)
+        fun toggleFavorite(task: Task)
         fun remove(task: Task)
     }
 
@@ -21,7 +21,7 @@ interface TasksContract {
         suspend fun insertTask(title: String?, description: String): Task?
         suspend fun updateTask(task: Task)
         suspend fun deleteTask(task: Task)
-        suspend fun favoriteTask(task: Task)
+        suspend fun favoriteTask(task: Task, isFavorite: Boolean)
 
         enum class Filter { ALL, FAVORITE }
     }

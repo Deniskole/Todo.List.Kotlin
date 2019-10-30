@@ -44,7 +44,7 @@ class TasksFireBaseStorage(private val ref: DatabaseReference) : TasksContract.S
         ref.child(task.id).removeValue().await()
     }
 
-    override suspend fun favoriteTask(task: Task) {
-        ref.child(task.id).child(PATH_FAVORITE).setValue(task.favorite).await()
+    override suspend fun favoriteTask(task: Task, isFavorite: Boolean) {
+        ref.child(task.id).child(PATH_FAVORITE).setValue(isFavorite).await()
     }
 }
